@@ -12,6 +12,9 @@
     "@supabase/supabase-js": "^2.7.1",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-router-dom": "^6.8.1",
+    "shortid": "^2.2.16",
+    "start": "^5.1.0"
   }
 }
