@@ -28,7 +28,8 @@ const Home = () => {
       provider: 'spotify',
       options: {
         scopes: 'user-top-read'
-      }
+      }, 
+      redirectTo: window.location.origin
     })
   }
   return (
