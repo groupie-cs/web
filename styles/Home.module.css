@@ -17,6 +17,11 @@
   font-family: var(--font-mono);
 }
 
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0.5rem;
+}
 
 .footer {
   display: flex;
@@ -41,9 +46,9 @@
   font-weight: 600;
   position: absolute;
   top: 40%;
-  left: 27%;
-  width: 12vw;
-  height: 12vh;
+  left: 26%;
+  width: 11vw;
+  height: 11vh;
 }
 
 .description a {

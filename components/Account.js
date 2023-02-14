@@ -82,11 +82,11 @@ export default function Account({ session }) {
     return (
         <div className={styles.main}>
             <div>
-                <label htmlFor="email">Email</label>
+                <label className={styles.label} htmlFor="email">Email</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
             <div>
-                <label htmlFor="username">Username</label>
+                <label className={styles.label} htmlFor="username">Username</label>
                 <input
                     id="username"
                     type="text"
@@ -95,7 +95,7 @@ export default function Account({ session }) {
                 />
             </div>
             <div>
-                <label htmlFor="website">Website</label>
+                <label className={styles.label} htmlFor="website">Website</label>
                 <input
                     id="website"
                     type="website"
