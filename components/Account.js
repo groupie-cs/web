@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import Link from 'next/link'
 
 
 export default function Account({ session }) {
@@ -94,16 +95,6 @@ export default function Account({ session }) {
                 />
             </div>
             <div>
-                <label htmlFor="website">Website</label>
-                <input
-                    id="website"
-                    type="website"
-                    value={website || ''}
-                    onChange={(e) => setWebsite(e.target.value)}
-                />
-            </div>
-
-            <div>
                 <button
                     className="button primary block"
                     onClick={() => updateProfile({ username, website, avatar_url })}
@@ -112,11 +103,17 @@ export default function Account({ session }) {
                     {loading ? 'Loading ...' : 'Update'}
                 </button>
             </div>
-
             <div>
                 <button className="button block" onClick={() => supabase.auth.signOut()}>
                     Sign Out
                 </button>
+            </div>
+            <div>
+                <button className="button block">
+                <Link href="/filter">
+                        <a>Next</a>
+                </Link>
+            </button>
             </div>
         </div>
     )
