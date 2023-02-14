@@ -10,6 +10,7 @@ export default function Account({ session }) {
     const [username, setUsername] = useState(null)
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
+    const [artistData, setArtistData] = useState(false)
 
     useEffect(() => {
         getProfile()
@@ -22,7 +23,7 @@ export default function Account({ session }) {
             const { provider_token, user } = session
             const userId = user.user_metadata.user_name
 
-            const allRepos = await (
+            const artistData = await (
                 await fetch(`https://api.spotify.com/v1/me/top/artists`, {
                     method: 'GET',
                     headers: {
@@ -31,7 +32,8 @@ export default function Account({ session }) {
                 })
             ).json()
 
-            console.log(allRepos)
+            console.log(artistData)
+            setArtistData(artistData)
 
             let { data, error, status } = await supabase
                 .from('profiles')
@@ -119,6 +121,20 @@ export default function Account({ session }) {
                     Sign Out
                 </button>
             </div>
+            Your Top Artists
+            <div classname={styles.grid}>
+            {artistData && artistData.items.map((artist) => {
+                return (
+                    <div key={artist.id}>
+                        <div className={styles.card}>
+                            <h2>{artist.name}</h2>
+                            <img classname={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
+                        </div>
+                    </div>
+                )
+            })}
+            </div>
+
         </div>
     )
 }
