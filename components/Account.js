@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import styles from '@/styles/Home.module.css'
 
 
 export default function Account({ session }) {
@@ -79,7 +80,7 @@ export default function Account({ session }) {
     }
 
     return (
-        <div className="form-widget">
+        <div className={styles.main}>
             <div>
                 <label htmlFor="email">Email</label>
                 <input id="email" type="text" value={session.user.email} disabled />
@@ -105,7 +106,7 @@ export default function Account({ session }) {
 
             <div>
                 <button
-                    className="button primary block"
+                    className={styles.button}
                     onClick={() => updateProfile({ username, website, avatar_url })}
                     disabled={loading}
                 >
@@ -114,7 +115,7 @@ export default function Account({ session }) {
             </div>
 
             <div>
-                <button className="button block" onClick={() => supabase.auth.signOut()}>
+                <button className={styles.button} onClick={() => supabase.auth.signOut()}>
                     Sign Out
                 </button>
             </div>
