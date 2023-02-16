@@ -1,6 +1,6 @@
-import './concertFinder.css'
-import DateRangePicker from '../../components/dateRangePicker';
-import Filter from '../../components/filter';
+//import './concertFinder.css'
+import Filter from '../components/filter';
+import React from 'react';
 
 class ConcertFinder extends React.Component {
    state = {

@@ -1,24 +1,77 @@
-import React from "react";
-import DateRangePicker from "./dateRangePicker";
+import React, { useState } from "react";
+//import DateRange from "./dateRange";
 
-import icon from '../public/ticketmasterPlaceholder.jpeg';
-
-class Filter extends React.Component {
-    render() {
-        return (
-            <form onSubmit={this.props.getConcerts} style={{ textAlign: 'center' }}>
-
-                Please fill out your Concert Filter Preferences:
-                <div style={{paddingTop:'1%'}}>
-                    <img src={icon} alt={"icon"} height={"30"} style={{verticalAlign:'middle'}} />
-                    <input type="text" name="location" disabled={this.props.isSearchDisabled} placeholder="Your city..." />
-                    <input type="text" name="priceFloor" disabled={this.props.isSearchDisabled} placeholder="How poor are you?" />
-                    <input type="text" name="priceCeiling" disabled={this.props.isSearchDisabled} placeholder="How rich are you?" />
-                    <DateRangePicker />
-                </div>
-            </form>
-        );
+function Filter() {
+    const [formState, setFormState] = useState({
+      location: '',
+      priceFloor: '',
+      priceCeiling: '',
+      dateStart: '',
+      dateEnd: ''
+    });
+  
+    const [displayState, setDisplayState] = useState(null);
+  
+    const handleChange = (event) => {
+      const { name, value } = event.target;
+      setFormState(prevState => ({
+        ...prevState,
+        [name]: value
+      }));
     }
-}
+  
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      setDisplayState(formState);
+    }
 
-export default Filter;
+    const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso'
+    var new_url
+  
+    return (
+      <div>
+        <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
+        Please fill out your Concert Filter Preferences:
+        <div style={{paddingTop:'1%'}}>
+            <label htmlFor="location">Location</label>
+            <input type="text" id="location" name="location" value={formState.location} onChange={handleChange}  placeholder="Where do you want to find a concert?"  />
+          </div>
+          <div>
+            <label htmlFor="priceFloor">Cheapest Price Preference</label>
+            <input type="text" id="priceFloor" name="priceFloor" value={formState.priceFloor} onChange={handleChange}  placeholder="Lower Price Range"/>
+          </div>
+          <div>
+            <label htmlFor="priceCeiling">Most Expensive Price Preference</label>
+            <input type="text" id="priceCeiling" name="priceCeiling" value={formState.priceCeiling} onChange={handleChange}  placeholder="Higher Price Range"/>
+          </div>
+           <div>
+            <label htmlFor="startDate">Start Date</label>
+            <input type="text" id="startDate" name="startDate" value={formState.preference4} onChange={handleChange}  placeholder="Start Date displayed as MM/DD/YYYY"/>
+          </div>
+          <div>
+            <label htmlFor="endDate">End Date</label>
+            <input type="text" id="endDate" name="endDate" value={formState.preference4} onChange={handleChange} placeholder="End Date displayed as MM/DD/YYYY"/>
+          </div>
+          <div>
+
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+        {displayState && (
+          <div>
+            <h2>Filter Preferences:</h2>
+            <ul>
+              <li>Locaiton: {displayState.location}</li>
+              <li>Price Floor: {displayState.priceFloor}</li>
+              <li>Price Ceiling: {displayState.priceCeiling}</li>
+              <li>Date Start: {displayState.startDate}</li>
+              <li>Date End: {displayState.endDate}</li>
+              <li>Url: {url + '&keyword=' + '&radius=' + 50 + '&startDateTime=' + displayState.dateStart + '&endDateTime=' + displayState.dateEnd + '&city=' + displayState.location}</li>
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  export default Filter;

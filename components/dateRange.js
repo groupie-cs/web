@@ -7,7 +7,7 @@ import { addDays } from 'date-fns'
 import 'react-date-range/dist/styles.css'
 import 'react-date-range/dist/theme/default.css'
 
-const DateRangePicker = () => {
+const DateRange = () => {
 
     // date state
     const [range, setRange] = useState([
@@ -26,6 +26,8 @@ const DateRangePicker = () => {
 
     useEffect(() => {
         //set current date on load
+        console.log(range[0].startDate)
+        console.log(range[0].endDate)
         document.addEventListener("keydown", hideOnEscape, true)
         document.addEventListener("click", hideOnClickOutside, true)
     }, [])
@@ -33,6 +35,8 @@ const DateRangePicker = () => {
     // hide dropdown on ESC
     const hideOnEscape = (e) => {
         console.log(e.key)
+        console.log(range[0].startDate)
+        console.log(range[0].endDate)
         if ( e.key === "Escape" ) {
             setOpen(false)
         }
@@ -47,6 +51,7 @@ const DateRangePicker = () => {
 
 
     return (
+        
         <div className="calendarWrap">
             <input
                 value={`${format(range[0].startDate, "MM/dd/yyyy")} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
@@ -73,6 +78,6 @@ const DateRangePicker = () => {
     )
 }
    
-export default DateRangePicker;
+export default DateRange;
 
 
