@@ -121,6 +121,13 @@ export default function Account({ session }) {
                     Sign Out
                 </button>
             </div>
+            <div>
+                <button className="button block">
+                <Link href="/filter">
+                        <a>Next</a>
+                </Link>
+            </button>
+            </div>
             Your Top Artists
             <div classname={styles.grid}>
             {artistData && artistData.items.map((artist) => {
@@ -133,13 +140,6 @@ export default function Account({ session }) {
                     </div>
                 )
             })}
-            </div>
-            <div>
-                <button className="button block">
-                <Link href="/filter">
-                        <a>Next</a>
-                </Link>
-            </button>
             </div>
         </div>
     )

@@ -1,25 +1,10 @@
 import Link from 'next/link'
+import Navbar from '../components/Navbar'
 
 const GroupsPage = () => {
   return (
     <div>
-      <nav>
-        <button >
-        <Link href="/filter">
-        <a>filters</a>
-      </Link>
-        </button>
-        <button >
-        <Link href="/groups">
-        <a>groups</a>
-      </Link>
-        </button>
-        <button >
-        <Link href="/invite">
-        <a>invite</a>
-      </Link>
-        </button>
-      </nav>
+      <Navbar></Navbar>
       <div></div>
       <h1>Groups Page</h1>
       <Link href="/filter">
