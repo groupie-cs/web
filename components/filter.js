@@ -26,7 +26,6 @@ function Filter() {
     }
 
     const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso'
-    var new_url
   
     return (
       <div>
