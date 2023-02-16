@@ -14,8 +14,9 @@ const Home = () => {
         scopes: 'user-top-read'
       }
     })
-  }
 
+  }
+  
   return (
     <div className="container" style={{ padding: '50px 0 100px 0' }}>
       {!session ? (
