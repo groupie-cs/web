@@ -124,7 +124,7 @@ export default function Account({ session }) {
             <div>
                 <button className="button block">
                 <Link href="/filter">
-                        <a>Next</a>
+                        Next
                 </Link>
             </button>
             </div>

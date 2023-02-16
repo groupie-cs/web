@@ -9,7 +9,7 @@ const FilterPage = () => {
       <h1>Filters</h1>
       <div></div>
       <Link href="/groups">
-        <a>Next</a>
+        Next
       </Link>
     </div>
   )

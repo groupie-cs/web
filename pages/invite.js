@@ -8,7 +8,7 @@ const InvitePage = () => {
       <div></div>
       <h1>Invite Page</h1>
       <Link href="/groups">
-        <a>Previous</a>
+        Previous
       </Link>
     </div>
   )

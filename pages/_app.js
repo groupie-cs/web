@@ -5,7 +5,6 @@ import { useState } from 'react'
 import '@/styles/globals.css'
 import { Inter } from '@next/font/google'
 const inter = Inter({ subsets: ['latin'] })
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 function MyApp({ Component, pageProps }) {

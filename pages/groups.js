@@ -8,11 +8,11 @@ const GroupsPage = () => {
       <div></div>
       <h1>Groups Page</h1>
       <Link href="/filter">
-        <a>Previous</a>
+        Previous
       </Link>
       <div></div>
       <Link href="/invite">
-        <a>Next</a>
+        Next
       </Link>
     </div>
   )

@@ -4,13 +4,13 @@ const Navbar = () => {
     return (
         <nav>
                 <Link href="/filter">
-                    <a>filters</a>
+                    filters
                 </Link>
                 <Link href="/groups">
-                    <a>groups</a>
+                    groups
                 </Link>
                 <Link href="/invite">
-                    <a>invite</a>
+                    invite
                 </Link>
         </nav>
     );
