@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import styles from '@/styles/Home.module.css'
+import Link from 'next/link'
 
 
 export default function Account({ session }) {
@@ -9,6 +11,7 @@ export default function Account({ session }) {
     const [username, setUsername] = useState(null)
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
+    const [artistData, setArtistData] = useState(false)
 
     useEffect(() => {
         getProfile()
@@ -21,7 +24,7 @@ export default function Account({ session }) {
             const { provider_token, user } = session
             const userId = user.user_metadata.user_name
 
-            const allRepos = await (
+            const artistData = await (
                 await fetch(`https://api.spotify.com/v1/me/top/artists`, {
                     method: 'GET',
                     headers: {
@@ -30,7 +33,8 @@ export default function Account({ session }) {
                 })
             ).json()
 
-            console.log(allRepos)
+            console.log(artistData)
+            setArtistData(artistData)
 
             let { data, error, status } = await supabase
                 .from('profiles')
@@ -79,13 +83,13 @@ export default function Account({ session }) {
     }
 
     return (
-        <div className="form-widget">
+        <div className={styles.main}>
             <div>
-                <label htmlFor="email">Email</label>
+                <label className={styles.label} htmlFor="email">Email</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
             <div>
-                <label htmlFor="username">Username</label>
+                <label className={styles.label} htmlFor="username">Username</label>
                 <input
                     id="username"
                     type="text"
@@ -94,7 +98,7 @@ export default function Account({ session }) {
                 />
             </div>
             <div>
-                <label htmlFor="website">Website</label>
+                <label className={styles.label} htmlFor="website">Website</label>
                 <input
                     id="website"
                     type="website"
@@ -105,18 +109,37 @@ export default function Account({ session }) {
 
             <div>
                 <button
-                    className="button primary block"
+                    className={styles.button}
                     onClick={() => updateProfile({ username, website, avatar_url })}
                     disabled={loading}
                 >
                     {loading ? 'Loading ...' : 'Update'}
                 </button>
             </div>
-
             <div>
-                <button className="button block" onClick={() => supabase.auth.signOut()}>
+                <button className={styles.button} onClick={() => supabase.auth.signOut()}>
                     Sign Out
                 </button>
+            </div>
+            Your Top Artists
+            <div classname={styles.grid}>
+            {artistData && artistData.items.map((artist) => {
+                return (
+                    <div key={artist.id}>
+                        <div className={styles.card}>
+                            <h2>{artist.name}</h2>
+                            <img classname={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
+                        </div>
+                    </div>
+                )
+            })}
+            </div>
+            <div>
+                <button className="button block">
+                <Link href="/filter">
+                        <a>Next</a>
+                </Link>
+            </button>
             </div>
         </div>
     )
