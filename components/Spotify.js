@@ -14,7 +14,7 @@ export class Spotify {
                 },
             })
         ).json()
-    
+
         return topArtists
     }
 
@@ -26,10 +26,17 @@ export class Spotify {
                 break
             }
 
+            // if (topArtists.items[i].genres[0] != undefined && topArtists.items[i].genres[0] != "") {
+            console.log(topArtists.items[i].genres[0])
             if (topArtists.items[i].genres[0] != undefined) {
                 genres[i] = topArtists.items[i].genres[0]
+            } else {
+                genres[i] = ""
             }
+            // }
+
         }
+        genres.filter(n => n)
 
         return genres
     }
@@ -55,8 +62,8 @@ export class Spotify {
 
         const recTracks = await (
             await fetch('https://api.spotify.com/v1/recommendations?' + new URLSearchParams({
-                    seed_artists: artistIDList
-                }), {
+                seed_artists: artistIDList
+            }), {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${provider_token}`

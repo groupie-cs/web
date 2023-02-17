@@ -12,6 +12,7 @@ export default function Account({ session }) {
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
+    const [recData, setRecData] = useState(false)
     const spotify = new Spotify()
     const ticketmaster = new Ticketmaster()
 
@@ -50,6 +51,11 @@ export default function Account({ session }) {
 
             const artistData = await spotify.getTopArtists(session)
             setArtistData(artistData)
+            const topGenres = spotify.getTopGenres(artistData, 4)
+            console.log(topGenres)
+            const recs = await ticketmaster.getConcerts("Chicago", topGenres)
+            setRecData(recs)
+            console.log(recs)
 
         } catch (error) {
             alert('Error loading user data!')
@@ -62,12 +68,6 @@ export default function Account({ session }) {
     async function updateProfile({ username, website, avatar_url, session }) {
         try {
             setLoading(true)
-            const artistData = await spotify.getTopArtists(session)
-            const topGenres = spotify.getTopGenres(artistData, 4)
-
-            const recs = await ticketmaster.getConcerts("Indianapolis", topGenres)
-            
-            setArtistData(artistData)
 
             const updates = {
                 id: user.id,
@@ -125,10 +125,12 @@ export default function Account({ session }) {
                 </button>
             </div>
     */}
-            <div>
-                <button className={styles.button} onClick={() => supabase.auth.signOut()}>
-                    Sign Out
-                </button>
+            <div className={styles.right}>
+                <div className={styles.description}>
+                    <p onClick={() => supabase.auth.signOut()}>
+                        Sign Out
+                    </p>
+                </div>
             </div>
 
 
@@ -146,6 +148,22 @@ export default function Account({ session }) {
                         })}
                     </div>
                     <h1>And get your friend's tastes next</h1>
+                </div>
+            </div>
+
+            <div className={styles.center}>
+                <div className={styles.app}>
+                    <h1>Lets look at some concerts</h1>
+                    <div className={styles.hs}>
+                        {recData && recData._embedded.events.map((rec) => {
+                            return (
+                                <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
+                                    <h2>{rec.name}</h2>
+                                    <img className={styles.artistimg} src={rec.images[0].url} alt={rec.name} />
+                                </a>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
 
