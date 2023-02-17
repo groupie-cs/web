@@ -116,13 +116,13 @@ export default function Account({ session }) {
                 </button>
             </div>
             Your Top Artists
-            <div classname={styles.grid}>
+            <div className={styles.grid}>
             {artistData && artistData.items.map((artist) => {
                 return (
                     <div key={artist.id}>
                         <div className={styles.card}>
                             <h2>{artist.name}</h2>
-                            <img classname={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
+                            <img className={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
                         </div>
                     </div>
                 )
