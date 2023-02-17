@@ -2,19 +2,9 @@ import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 
 
-export default function Spotify({ session }) {
-    const supabase = useSupabaseClient()
-    const user = useUser()
+export class Spotify {
 
-    async function loadTopArtists(topArtists) {
-
-        const updates = {artists: topArtists}
-
-        let { error } = await supabase.from('profiles').insert(updates)
-        if (error) throw error
-    }
-
-    async function getTopArtists() {
+    async getTopArtists(session) {
         const { provider_token, user } = session
         const topArtists = await (
             await fetch(`https://api.spotify.com/v1/me/top/artists`, {
@@ -43,8 +33,7 @@ export default function Spotify({ session }) {
         }
     
         console.log("Starting")
-        console.log(artistObject)
     
-        return test
+        return topArtists
     }
 }

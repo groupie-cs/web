@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import styles from '@/styles/Home.module.css'
-import Spotify from './Spotify'
-
-
+import { Spotify } from '../components/Spotify'
 
 export default function Account({ session }) {
     const supabase = useSupabaseClient()
@@ -49,11 +47,14 @@ export default function Account({ session }) {
         }
     }
 
-    async function updateProfile({ username, website, avatar_url}) {
+    async function updateProfile({ username, website, avatar_url, session}) {
         try {
             setLoading(true)
 
-            print(Spotify.getTopArtists())
+            const spotify = new Spotify()
+            const artistData = await spotify.getTopArtists(session)
+            setArtistData(artistData)
+            console.log(artistData)
 
             const updates = {
                 id: user.id,
@@ -103,7 +104,7 @@ export default function Account({ session }) {
             <div>
                 <button
                     className={styles.button}
-                    onClick={() => updateProfile({ username, website, avatar_url })}
+                    onClick={() => updateProfile({ username, website, avatar_url, session })}
                     disabled={loading}
                 >
                     {loading ? 'Loading ...' : 'Update'}
