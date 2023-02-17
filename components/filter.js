@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DateRange from "./dateRange";
 
 function Filter() {
     const [formState, setFormState] = useState({
