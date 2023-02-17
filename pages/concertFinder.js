@@ -30,7 +30,7 @@ class ConcertFinder extends React.Component {
          // wait on searches
          this.setState({ isFinished: false });
 
-         const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso'
+         const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
          
          // filter values
          // TODO **** Ticketmaster Does not allow to search by price range, will have to be implemented after found concerts

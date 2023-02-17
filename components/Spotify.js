@@ -18,15 +18,53 @@ export class Spotify {
         return topArtists
     }
 
+    getTopGenres(topArtists, num = 5) {
+        let genres = []
+        for (let i = 0; i < num; i++) {
+            if (i > topArtists.limit) {
+                console.log("Your num is larger than total artists to getTopGenres")
+                break
+            }
 
-    async parseArtists(topArtists) {
-        let artists = []
-        for (let i = 0; i < topArtists.limit; i++) {
-            artists[i] = topArtists.items[i].name
-
+            if (topArtists.items[i].genres[0] != undefined) {
+                genres[i] = topArtists.items[i].genres[0]
+            }
         }
-        return JSON.parse(artists.toString())
+
+        return genres
     }
 
+    async getRecTracks(session, topArtists) {
+        const { provider_token, user } = session
+        let artistIDList = ""
 
+        for (let i = 0; i < 5; i++) {
+            if (i > topArtists.limit) {
+                console.log("5 is larger than total artists to getRecTracks")
+                break
+            }
+
+            if (i != 0) {
+                artistIDList += ","
+            }
+            artistIDList += topArtists.items[i].id
+
+        }
+
+        console.log(artistIDList)
+
+        const recTracks = await (
+            await fetch('https://api.spotify.com/v1/recommendations?' + new URLSearchParams({
+                    seed_artists: artistIDList
+                }), {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${provider_token}`
+                },
+            })
+        ).json().tracks
+
+
+        return recTracks
+    }
 }

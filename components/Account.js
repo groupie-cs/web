@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import styles from '@/styles/Home.module.css'
 import { Spotify } from '../components/Spotify'
+import { Ticketmaster } from './Ticketmaster'
 
 export default function Account({ session }) {
     const supabase = useSupabaseClient()
@@ -12,6 +13,7 @@ export default function Account({ session }) {
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
     const spotify = new Spotify()
+    const ticketmaster = new Ticketmaster()
 
     useEffect(() => {
         getProfile()
@@ -58,8 +60,12 @@ export default function Account({ session }) {
     async function updateProfile({ username, website, avatar_url, session}) {
         try {
             setLoading(true)
-
+            console.log("start Testing")
             const artistData = await spotify.getTopArtists(session)
+            const topGenres = spotify.getTopGenres(artistData, 4)
+
+            const recs = await ticketmaster.getConcerts("Indianapolis", topGenres)
+            
             setArtistData(artistData)
 
             const updates = {
