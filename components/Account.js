@@ -18,7 +18,7 @@ export default function Account({ session }) {
     useEffect(() => {
         getProfile()
     }, [session])
-    
+
 
     async function getProfile() {
         try {
@@ -45,9 +45,11 @@ export default function Account({ session }) {
 
             if (data.artists == null) {
                 console.log("Testing...")
-                updateProfile({ username, website, avatar_url, session})
+                updateProfile({ username, website, avatar_url, session })
             }
 
+            const artistData = await spotify.getTopArtists(session)
+            setArtistData(artistData)
 
         } catch (error) {
             alert('Error loading user data!')
@@ -57,10 +59,9 @@ export default function Account({ session }) {
         }
     }
 
-    async function updateProfile({ username, website, avatar_url, session}) {
+    async function updateProfile({ username, website, avatar_url, session }) {
         try {
             setLoading(true)
-            console.log("start Testing")
             const artistData = await spotify.getTopArtists(session)
             const topGenres = spotify.getTopGenres(artistData, 4)
 
@@ -74,7 +75,7 @@ export default function Account({ session }) {
                 website,
                 avatar_url,
                 updated_at: new Date().toISOString(),
-                artists: artistData 
+                artists: artistData
             }
 
             let { error } = await supabase.from('profiles').upsert(updates)
@@ -130,17 +131,17 @@ export default function Account({ session }) {
                 </button>
             </div>
             Your Top Artists
-            <div className={styles.grid}>
-            {artistData && artistData.items.map((artist) => {
-                return (
-                    <div key={artist.id}>
-                        <div className={styles.card}>
+            <div className={styles.app}>
+                <div className={styles.hs}>
+                {artistData && artistData.items.map((artist) => {
+                    return (
+                        <div className={styles.card} key={artist.id}>
                             <h2>{artist.name}</h2>
-                            <img className={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
+                            <img className={styles.artistimg} src={artist.images[1].url} alt={artist.name} />
                         </div>
-                    </div>
-                )
-            })}
+                    )
+                })}
+                </div>
             </div>
 
         </div>
