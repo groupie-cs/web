@@ -1,21 +1,58 @@
-import React, { useState } from 'react';
-import shortid from 'shortid';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import styles from '@/styles/Home.module.css'
+import { v4 as uuidv4 } from 'uuid';
 
-function LandingPage() {
+export default function LandingPage({session}) {
+  const supabase = useSupabaseClient()
+  const user = useUser()
+  const [loading, setLoading] = useState(true)
+  const [username, setUsername] = useState(null)
+
+
+
   const [inviteLink, setInviteLink] = useState('');
-  //const navigate = useNavigate();
 
-  const generateInviteLink = async () => {
-    // Generate a unique invite link using the shortid library
-    const newInviteLink = shortid.generate();
+  useEffect(() => {
+      generateInviteLink()
+  }, [session])
 
-    // TODO: Send invite code to backend
+  async function generateInviteLink() {
+    try {
+      setLoading(true)
+      const user = await session
+      const uuid = uuidv4();
+      
+
+      const { data, error } = await supabase
+        .from('groups')
+        .insert([{
+          group_id: uuid,
+          inserted_at: new Date().toISOString(),
+          //admin_id: user.id,
+        }])
+
+      if (error) throw error
+
+      // const userUpdate = {
+      //   id: user.id,
+      //   updated_at: new Date().toISOString(),
+      //   group_id: uuid
+      // }
+
+      //let { newError } = await supabase.from('profiles').upsert(userUpdate)
+      //if (newError) throw newError
 
     // Set the state to the new invite link and redirect the user
-    setInviteLink(newInviteLink);
-  //  navigate.push(`/invite/${newInviteLink}`);
-  };
+      setInviteLink(uuid);
+
+    } catch (error) {
+      alert('Error updating the data!')
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div>
@@ -30,4 +67,3 @@ function LandingPage() {
   );
 }
 
-export default LandingPage;
