@@ -84,7 +84,7 @@ export default function Account({ session }) {
 
     return (
         <div className={styles.main}>
-            <div>
+            {/* <div>
                 <label className={styles.label} htmlFor="email">Email</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
@@ -121,8 +121,10 @@ export default function Account({ session }) {
                 <button className={styles.button} onClick={() => supabase.auth.signOut()}>
                     Sign Out
                 </button>
-            </div>
-            Your Top Artists
+            </div> */}
+
+            
+            <h1>Your Top Artists</h1>
             <div className={styles.app}>
                 <div className={styles.hs}>
                 {artistData && artistData.items.map((artist) => {
