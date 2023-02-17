@@ -11,6 +11,7 @@ export default function Account({ session }) {
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
+    const spotify = new Spotify()
 
     useEffect(() => {
         getProfile()
@@ -39,6 +40,13 @@ export default function Account({ session }) {
                 setWebsite(data.website)
                 setAvatarUrl(data.avatar_url)
             }
+
+            if (data.artists == null) {
+                console.log("Testing...")
+                updateProfile({ username, website, avatar_url, session})
+            }
+
+
         } catch (error) {
             alert('Error loading user data!')
             console.log(error)
@@ -51,10 +59,8 @@ export default function Account({ session }) {
         try {
             setLoading(true)
 
-            const spotify = new Spotify()
             const artistData = await spotify.getTopArtists(session)
             setArtistData(artistData)
-            console.log(artistData)
 
             const updates = {
                 id: user.id,
@@ -62,6 +68,7 @@ export default function Account({ session }) {
                 website,
                 avatar_url,
                 updated_at: new Date().toISOString(),
+                artists: artistData 
             }
 
             let { error } = await supabase.from('profiles').upsert(updates)

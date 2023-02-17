@@ -15,25 +15,18 @@ export class Spotify {
             })
         ).json()
     
-        const artistList = topArtists.items
-        const artistObject = []
-        let test = {}
-        let counter = 0
-    
-        for (const artist in artistList) {
-            const artistInfo = {
-                name: artist.name,
-                genres: artist.genres,
-                images: artist.images,
-                spotifyURL: artist.external_urls
-            }
-            test = artistInfo
-            artistObject[counter] = artistInfo
-            counter++
-        }
-    
-        console.log("Starting")
-    
         return topArtists
     }
+
+
+    async parseArtists(topArtists) {
+        let artists = []
+        for (let i = 0; i < topArtists.limit; i++) {
+            artists[i] = topArtists.items[i].name
+
+        }
+        return JSON.parse(artists.toString())
+    }
+
+
 }
