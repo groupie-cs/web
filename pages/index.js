@@ -29,8 +29,9 @@ const Home = () => {
       options: {
         scopes: 'user-top-read',
         redirectTo: window.location.origin
-      }, 
+      }
     })
+
   }
   
   return (

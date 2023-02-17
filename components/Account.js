@@ -16,6 +16,49 @@ export default function Account({ session }) {
         getProfile()
     }, [session])
 
+    async function getTopArtists() {
+        const { provider_token, user } = session
+        const topArtists = await (
+            await fetch(`https://api.spotify.com/v1/me/top/artists`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${provider_token}`
+                },
+            })
+        ).json()
+      
+        const artistList = topArtists.items
+        const artistObject = []
+        let test = {}
+        let counter = 0
+      
+        for (const artist in artistList) {
+            const artistInfo = {
+                name: artist.name,
+                genres: artist.genres,
+                images: artist.images,
+                spotifyURL: artist.external_urls
+            }
+            test = artistInfo
+            artistObject[counter] = artistInfo
+            counter++
+        }
+      
+        console.log("Starting")
+        console.log(artistObject)
+      
+        return test
+    }
+
+    async function loadTopArtists(topArtists) {
+
+        const updates = {artists: topArtists}
+
+        let { error } = await supabase.from('profiles').insert(updates)
+        if (error) throw error
+    }
+    
+
     async function getProfile() {
         try {
             setLoading(true)
@@ -23,21 +66,9 @@ export default function Account({ session }) {
             const { provider_token, user } = session
             const userId = user.user_metadata.user_name
 
-            const artistData = await (
-                await fetch(`https://api.spotify.com/v1/me/top/artists`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${provider_token}`
-                    },
-                })
-            ).json()
-
-            console.log(artistData)
-            setArtistData(artistData)
-
             let { data, error, status } = await supabase
                 .from('profiles')
-                .select(`username, website, avatar_url`)
+                .select(`username, website, avatar_url, artists`)
                 .eq('id', user.id)
                 .single()
 
@@ -58,7 +89,7 @@ export default function Account({ session }) {
         }
     }
 
-    async function updateProfile({ username, website, avatar_url }) {
+    async function updateProfile({ username, website, avatar_url}) {
         try {
             setLoading(true)
 
@@ -72,6 +103,7 @@ export default function Account({ session }) {
 
             let { error } = await supabase.from('profiles').upsert(updates)
             if (error) throw error
+
             alert('Profile updated!')
         } catch (error) {
             alert('Error updating the data!')
