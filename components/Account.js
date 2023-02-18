@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import styles from '@/styles/Home.module.css'
 import { Spotify } from '../components/Spotify'
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Account({ session }) {
     const supabase = useSupabaseClient()
@@ -11,11 +12,88 @@ export default function Account({ session }) {
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
+    const [inviteLink, setInviteLink] = useState('');
+    const [isAdmin, setIsAdmin] = useState(null)
+
+
 
     useEffect(() => {
         getProfile()
     }, [session])
-    
+
+    useEffect(() => {
+        const inviteId = localStorage.getItem('inviteLink')
+        if (inviteId) {
+            console.log("Adding to Group")
+            setIsAdmin(false)
+            addToGroup(inviteId)
+        } else {
+            setIsAdmin(true)
+        }
+    }, [session])
+
+    async function addToGroup(inviteId) {
+        try {
+            setLoading(true)
+
+            const userUpdate = {
+                id: user.id,
+                updated_at: new Date().toISOString(),
+                group_id: inviteId,
+                is_group_admin: false
+              }
+  
+              let { newError } = await supabase.from('profiles').upsert(userUpdate)
+              if (newError) throw newError
+
+            alert('Profile updated!')
+        } catch (error) {
+            alert('Error updating the data!')
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    async function generateInviteLink() {
+        try {
+            setLoading(true)
+      
+            const uuid = uuidv4();
+            console.log(user.id)
+            
+            const newGroup = {
+                group_id: uuid,
+                inserted_at: new Date().toISOString(),
+                admin_id: user.id
+            }
+
+            let { error } = await supabase.from('groups').upsert(newGroup)
+            if (error) throw error
+      
+            const userUpdate = {
+              id: user.id,
+              updated_at: new Date().toISOString(),
+              group_id: uuid,
+              is_group_admin: true
+            }
+
+            let { newError } = await supabase.from('profiles').upsert(userUpdate)
+            if (newError) throw newError
+
+            alert('Profile updated!')
+      
+          // Set the state to the new invite link and redirect the user
+            setInviteLink(uuid);
+      
+          } catch (error) {
+            alert('Error updating the data!')
+            console.log(error)
+          } finally {
+            setLoading(false)
+          }
+    }
+
 
     async function getProfile() {
         try {
@@ -55,7 +133,6 @@ export default function Account({ session }) {
             const artistData = await spotify.getTopArtists(session)
             setArtistData(artistData)
             console.log(artistData)
-
             const updates = {
                 id: user.id,
                 username,
@@ -110,7 +187,24 @@ export default function Account({ session }) {
                     {loading ? 'Loading ...' : 'Update'}
                 </button>
             </div>
-
+        
+            <div>
+                {isAdmin ? (
+                    <button
+                        className={styles.button}
+                        onClick={() => generateInviteLink()}
+                        disabled={loading}
+                    >
+                        {loading ? 'Loading ...' : 'Generate Invite Link'}
+                    </button>
+                ) : null}
+                {inviteLink && (
+                    <p>
+                        Share this link with your friends: <a href={`http://localhost:3000/`}>{`http://localhost:3000/?inviteId=${inviteLink}`}</a>
+                    </p>
+                )}
+            </div>
+        
             <div>
                 <button className={styles.button} onClick={() => supabase.auth.signOut()}>
                     Sign Out
