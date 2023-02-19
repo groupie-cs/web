@@ -3,6 +3,10 @@ import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import styles from '@/styles/Home.module.css'
 import { Spotify } from '../components/Spotify'
 import { Ticketmaster } from './Ticketmaster'
+import ArtistData from './ArtistData'
+import ConcertData from './ConcertData'
+import FilterData from './FilterData'
+
 
 export default function Account({ session }) {
     const supabase = useSupabaseClient()
@@ -15,6 +19,7 @@ export default function Account({ session }) {
     const [recData, setRecData] = useState(false)
     const spotify = new Spotify()
     const ticketmaster = new Ticketmaster()
+    const [activeComponent, setActiveComponent] = useState('artistData')
 
     useEffect(() => {
         getProfile()
@@ -90,6 +95,26 @@ export default function Account({ session }) {
         }
     }
 
+    function handlePrevClick() {
+        if (activeComponent === 'artistData') {
+          setActiveComponent('artistData')
+        } else if (activeComponent === 'concertData') {
+          setActiveComponent('artistData')
+        } else {
+          setActiveComponent('concertData')
+        }
+      }
+
+      function handleNextClick() {
+        if (activeComponent === 'artistData') {
+          setActiveComponent('concertData')
+        } else if (activeComponent === 'concertData') {
+          setActiveComponent('filterData')
+        } else {
+          setActiveComponent('filterData')
+        }
+      }
+
     return (
         <div className={styles.main}>
             {/* <div>
@@ -133,39 +158,15 @@ export default function Account({ session }) {
                 </div>
             </div>
 
+            {/* add arrow buttons */}
 
-            <div className={styles.center}>
-                <div className={styles.app}>
-                    <h1>Lets look through your tastes</h1>
-                    <div className={styles.hs}>
-                        {artistData && artistData.items.map((artist) => {
-                            return (
-                                <div className={styles.card} key={artist.id}>
-                                    <h2>{artist.name}</h2>
-                                    <img className={styles.artistimg} src={artist.images[0].url} alt={artist.name} />
-                                </div>
-                            )
-                        })}
-                    </div>
-                    <h1>And get your friend's tastes next</h1>
-                </div>
-            </div>
-
-            <div className={styles.center}>
-                <div className={styles.app}>
-                    <h1>Lets look at some concerts</h1>
-                    <div className={styles.hs}>
-                        {recData && recData._embedded.events.map((rec) => {
-                            return (
-                                <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
-                                    <h2>{rec.name}</h2>
-                                    <img className={styles.artistimg} src={rec.images[0].url} alt={rec.name} />
-                                </a>
-                            )
-                        })}
-                    </div>
-                </div>
-            </div>
+        <div>
+            <button onClick={handlePrevClick}><i class="arrow left"></i></button>
+            <button onClick={handleNextClick}><i class="arrow right"></i></button>
+        </div>
+        {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
+        {activeComponent === 'concertData' && <ConcertData recData={recData} />}
+        {activeComponent === 'filterData' && <FilterData />}
 
         </div>
     )
