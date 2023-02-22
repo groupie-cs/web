@@ -11,14 +11,17 @@ export default function Account({ session }) {
     const [username, setUsername] = useState(null)
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
+    const [group_id, setGroupId] = useState(null)
+    const [groupData, setGroupData] = useState(null)
+    const [groupDataIsHere, setGroupDataIsHere] = useState(null)
     const [artistData, setArtistData] = useState(false)
-    const [inviteLink, setInviteLink] = useState('');
+    const [inviteLink, setInviteLink] = useState('')
     const [isAdmin, setIsAdmin] = useState(null)
-
 
 
     useEffect(() => {
         getProfile()
+        console.log("getting Profile")
     }, [session])
 
     useEffect(() => {
@@ -28,9 +31,62 @@ export default function Account({ session }) {
             setIsAdmin(false)
             addToGroup(inviteId)
         } else {
+            
+            console.log("You are a group owner")
+            console.log(group_id)
             setIsAdmin(true)
+
+             async function getGroup(groupId) {
+                try {
+                    setLoading(true)
+                    if (groupId) {
+                        const { data: users, error } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('group_id', groupId)
+
+                        if(error) console.log(error)
+                        else {
+                            setGroupData(users)
+                            setGroupDataIsHere(true)
+                            console.log(groupDataIsHere)
+                        }
+                    }
+
+                } catch (error) {
+                    alert('Error Getting Group!')
+                    console.log(error)
+                } finally {
+                    setLoading(false)
+                } 
+            
+            }
+            getGroup(group_id)
         }
-    }, [session])
+    }, [group_id, session])
+
+
+    async function removeUser(userId) {
+        try {
+            setLoading(true)
+
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ group_id: ""})
+                .eq('id', userId)
+            if (error) throw error
+
+            alert('Profile updated!')
+      
+          } catch (error) {
+            alert('Error updating the data!')
+            console.log(error)
+          } finally {
+            setLoading(false)
+          }
+    }
+
+
 
     async function addToGroup(inviteId) {
         try {
@@ -101,22 +157,26 @@ export default function Account({ session }) {
 
             const { provider_token, user } = session
             const userId = user.user_metadata.user_name
-
+            console.log("Getting Profile Data")
             let { data, error, status } = await supabase
                 .from('profiles')
-                .select(`username, website, avatar_url, artists`)
+                .select(`username, website, avatar_url, artists, group_id`)
                 .eq('id', user.id)
                 .single()
 
             if (error && status !== 406) {
+                console.log("Throwing Error")
                 throw error
             }
+
 
             if (data) {
                 setUsername(data.username)
                 setWebsite(data.website)
                 setAvatarUrl(data.avatar_url)
+                setGroupId(data.group_id)
             }
+            console.log("Set Profile Data")
         } catch (error) {
             alert('Error loading user data!')
             console.log(error)
@@ -153,6 +213,12 @@ export default function Account({ session }) {
         }
     }
 
+
+
+
+if(group_id != null && groupDataIsHere && groupData != null) {
+    //console.log("not null")
+    //console.log(groupData)
     return (
         <div className={styles.main}>
             <div>
@@ -223,7 +289,24 @@ export default function Account({ session }) {
                 )
             })}
             </div>
-
+            Your Group
+           
+            <div className={styles.grid}>
+            {groupData && groupData.map((member) => {
+                return (
+                    <div key={member.id}>
+                        <div className={styles.card}>
+                            <h2>{member.username}</h2>
+                            <img className={styles.artistImage} src={member.avatar_url} alt={`${member.username}'s avatar`} />
+                            <button onClick={() => removeUser(member.id)}>Remove</button>
+                        </div>
+                    </div>
+                )
+            })}
+            </div>
+                
+           
         </div>
     )
+}
 }
