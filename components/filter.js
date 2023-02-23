@@ -44,11 +44,11 @@ function Filter() {
           </div>
            <div>
             <label htmlFor="startDate">Start Date</label>
-            <input type="text" id="startDate" name="startDate" value={formState.startDate} onChange={handleChange}  placeholder="Start Date displayed as MM/DD/YYYY"/>
+            <input type="text" id="startDate" name="startDate" value={formState.startDate} onChange={handleChange}  placeholder="YYYY-MM-DD"/>
           </div>
           <div>
             <label htmlFor="endDate">End Date</label>
-            <input type="text" id="endDate" name="endDate" value={formState.endDate} onChange={handleChange} placeholder="End Date displayed as MM/DD/YYYY"/>
+            <input type="text" id="endDate" name="endDate" value={formState.endDate} onChange={handleChange} placeholder="YYYY-MM-DD"/>
           </div>
           <div>
 
@@ -64,7 +64,7 @@ function Filter() {
               <li>Price Ceiling: {displayState.priceCeiling}</li>
               <li>Date Start: {displayState.startDate}</li>
               <li>Date End: {displayState.endDate}</li>
-              <li>Url: {url + '&keyword=' + '&radius=' + 50 + '&startDateTime=' + displayState.startDate + '&endDateTime=' + displayState.endDate + '&city=' + displayState.location}</li>
+              <li>Url: {url + '&keyword=' + '&radius=' + 50 + '&startDateTime=' + displayState.startDate + 'T14:00:00Z' + '&endDateTime=' + displayState.endDate + 'T14:00:00Z' + '&city=' + displayState.location}</li>
 
             </ul>
           </div>

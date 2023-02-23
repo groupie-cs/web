@@ -48,7 +48,7 @@ class ConcertFinder extends React.Component {
             // GRAYSON TODO ************
             // Fill artists using Spotify API
             for (i = 0; i < this.state.artists.length; i++) {
-               var new_url = url + '&keyword=' + this.state.artists[i].name + '&radius=' + radius + '&startDateTime=' + startDateTime + '&endDateTime=' + endDateTime + '&city=' + city;
+               var new_url = url + '&keyword=' + this.state.artists[i].name + '&radius=' + radius + '&startDateTime=' + startDateTime + 'T14:00:00Z' + '&endDateTime=' + endDateTime + 'T14:00:00Z' + '&city=' + city;
                fetch(new_url)
                      .then(response => response.json())
                      .then(data => data._embedded && this.setState({ events: this.state.events.concat(data._embedded.events) }));
