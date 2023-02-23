@@ -70,13 +70,21 @@ export default function Account({ session }) {
         try {
             setLoading(true)
 
-            const { data, error } = await supabase
-                .from('profiles')
-                .update({ group_id: ""})
-                .eq('id', userId)
+            console.log(user.id)
+            
+
+            const userUpdate = {
+                id: userId,
+                updated_at: new Date().toISOString(),
+                is_group_admin: false,
+                group_id: null
+            }
+            
+            console.log(userUpdate)
+            let { error } = await supabase.from('profiles').upsert(userUpdate)
             if (error) throw error
 
-            alert('Profile updated!')
+            alert("User Removed!")
       
           } catch (error) {
             alert('Error updating the data!')
@@ -216,7 +224,7 @@ export default function Account({ session }) {
 
 
 
-if(group_id != null && groupDataIsHere && groupData != null) {
+//if(group_id != null && groupDataIsHere && groupData != null) {
     //console.log("not null")
     //console.log(groupData)
     return (
@@ -308,5 +316,5 @@ if(group_id != null && groupDataIsHere && groupData != null) {
            
         </div>
     )
-}
+//}
 }
