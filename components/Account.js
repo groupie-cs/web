@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import styles from '@/styles/Home.module.css'
 import { Spotify } from '../components/Spotify'
+import { Ticketmaster } from './Ticketmaster'
+import ArtistData from './ArtistData'
+import ConcertData from './ConcertData'
+import FilterData from './FilterData'
+
 
 export default function Account({ session }) {
     const supabase = useSupabaseClient()
@@ -11,11 +16,15 @@ export default function Account({ session }) {
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
+    const [recData, setRecData] = useState(false)
+    const spotify = new Spotify()
+    const ticketmaster = new Ticketmaster()
+    const [activeComponent, setActiveComponent] = useState('artistData')
 
     useEffect(() => {
         getProfile()
     }, [session])
-    
+
 
     async function getProfile() {
         try {
@@ -39,6 +48,20 @@ export default function Account({ session }) {
                 setWebsite(data.website)
                 setAvatarUrl(data.avatar_url)
             }
+
+            if (data.artists == null) {
+                console.log("Testing...")
+                updateProfile({ username, website, avatar_url, session })
+            }
+
+            const artistData = await spotify.getTopArtists(session)
+            setArtistData(artistData)
+            const topGenres = spotify.getTopGenres(artistData, 4)
+            console.log(topGenres)
+            const recs = await ticketmaster.getConcerts("Chicago", topGenres)
+            setRecData(recs)
+            console.log(recs)
+
         } catch (error) {
             alert('Error loading user data!')
             console.log(error)
@@ -47,14 +70,9 @@ export default function Account({ session }) {
         }
     }
 
-    async function updateProfile({ username, website, avatar_url, session}) {
+    async function updateProfile({ username, website, avatar_url, session }) {
         try {
             setLoading(true)
-
-            const spotify = new Spotify()
-            const artistData = await spotify.getTopArtists(session)
-            setArtistData(artistData)
-            console.log(artistData)
 
             const updates = {
                 id: user.id,
@@ -62,6 +80,7 @@ export default function Account({ session }) {
                 website,
                 avatar_url,
                 updated_at: new Date().toISOString(),
+                artists: artistData
             }
 
             let { error } = await supabase.from('profiles').upsert(updates)
@@ -76,9 +95,29 @@ export default function Account({ session }) {
         }
     }
 
+    function handlePrevClick() {
+        if (activeComponent === 'artistData') {
+          setActiveComponent('artistData')
+        } else if (activeComponent === 'concertData') {
+          setActiveComponent('artistData')
+        } else {
+          setActiveComponent('concertData')
+        }
+      }
+
+      function handleNextClick() {
+        if (activeComponent === 'artistData') {
+          setActiveComponent('concertData')
+        } else if (activeComponent === 'concertData') {
+          setActiveComponent('filterData')
+        } else {
+          setActiveComponent('filterData')
+        }
+      }
+
     return (
         <div className={styles.main}>
-            <div>
+            {/* <div>
                 <label className={styles.label} htmlFor="email">Email</label>
                 <input id="email" type="text" value={session.user.email} disabled />
             </div>
@@ -110,25 +149,25 @@ export default function Account({ session }) {
                     {loading ? 'Loading ...' : 'Update'}
                 </button>
             </div>
+    */}
+            <div className={styles.right}>
+                <div className={styles.description}>
+                    <p onClick={() => supabase.auth.signOut()}>
+                        Sign Out
+                    </p>
+                </div>
+            </div>
 
-            <div>
-                <button className={styles.button} onClick={() => supabase.auth.signOut()}>
-                    Sign Out
-                </button>
-            </div>
-            Your Top Artists
-            <div className={styles.grid}>
-            {artistData && artistData.items.map((artist) => {
-                return (
-                    <div key={artist.id}>
-                        <div className={styles.card}>
-                            <h2>{artist.name}</h2>
-                            <img className={styles.artistImage} src={artist.images[0].url} alt={artist.name} />
-                        </div>
-                    </div>
-                )
-            })}
-            </div>
+            {/* add arrow buttons */}
+
+        {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
+        {activeComponent === 'concertData' && <ConcertData recData={recData} />}
+        {activeComponent === 'filterData' && <FilterData />}
+
+        <div>
+            <button onClick={handlePrevClick}><i className="arrow left"></i></button>
+            <button onClick={handleNextClick}><i className="arrow right"></i></button>
+        </div>
 
         </div>
     )

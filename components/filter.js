@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DateRange from "./dateRange";
 
 function Filter() {
     const [formState, setFormState] = useState({
@@ -25,7 +24,7 @@ function Filter() {
       setDisplayState(formState);
     }
 
-    const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso'
+    const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
   
     return (
       <div>

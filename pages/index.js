@@ -52,9 +52,9 @@ const Home = () => {
               height='295'
               cx={190}
               cy={190}
-              rx={100}
+              rx={120}
               ry={100}
-              startOffset='7'
+              startOffset='25'
               reversed={true}
               text='GROUPIE'
               textProps={{ "style": { "fontSize": "70", "font": "Inter" } }}
