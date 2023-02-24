@@ -160,13 +160,14 @@ export default function Account({ session }) {
 
             {/* add arrow buttons */}
 
-        <div>
-            <button onClick={handlePrevClick}><i class="arrow left"></i></button>
-            <button onClick={handleNextClick}><i class="arrow right"></i></button>
-        </div>
         {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
         {activeComponent === 'concertData' && <ConcertData recData={recData} />}
         {activeComponent === 'filterData' && <FilterData />}
+
+        <div>
+            <button onClick={handlePrevClick}><i className="arrow left"></i></button>
+            <button onClick={handleNextClick}><i className="arrow right"></i></button>
+        </div>
 
         </div>
     )
