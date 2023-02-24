@@ -12,6 +12,7 @@ export default function ConcertData({ recData }) {
                                 <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
                                     <h2>{rec.name}</h2>
                                     <img className={styles.artistimg} src={rec.images[0].url} alt={rec.name} />
+                                    <h2>${rec.priceRanges[0].min}</h2>
                                 </a>
                             )
                         })}
