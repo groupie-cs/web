@@ -1,6 +1,26 @@
 import React, { useState } from "react";
 
 function Filter() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleClick = () => {
+      setIsOpen(!isOpen);
+    }
+  
+    return (
+      <>
+        <button onClick={handleClick}>Filter</button>
+        {isOpen && <FilterPopup />}
+      </>
+    );
+  }
+
+  function FilterPopup() {
+
+    const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
+  
+    const [displayState, setDisplayState] = useState(null);
+
     const [formState, setFormState] = useState({
       location: '',
       priceFloor: '',
@@ -8,9 +28,6 @@ function Filter() {
       startDate: '',
       endDate: ''
     });
-  
-    const [displayState, setDisplayState] = useState(null);
-  
     const handleChange = (event) => {
       const { name, value } = event.target;
       setFormState(prevState => ({
@@ -23,11 +40,8 @@ function Filter() {
       event.preventDefault();
       setDisplayState(formState);
     }
-
-    const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
-  
     return (
-      <div>
+      <div className="filter-popup">
         <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
         Please fill out your Concert Filter Preferences:
         <div style={{paddingTop:'1%'}}>
@@ -55,22 +69,8 @@ function Filter() {
           </div>
           <button type="submit">Submit</button>
         </form>
-        {displayState && (
-          <div>
-            <h2>Filter Preferences:</h2>
-            <ul>
-              <li>Locaiton: {displayState.location}</li>
-              <li>Price Floor: {displayState.priceFloor}</li>
-              <li>Price Ceiling: {displayState.priceCeiling}</li>
-              <li>Date Start: {displayState.startDate}</li>
-              <li>Date End: {displayState.endDate}</li>
-              <li>Url: {url + '&keyword=' + '&radius=' + 50 + '&startDateTime=' + displayState.startDate + '&endDateTime=' + displayState.endDate + '&city=' + displayState.location}</li>
-
-            </ul>
-          </div>
-        )}
       </div>
-    );
+    )
   }
   
   export default Filter;
