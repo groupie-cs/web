@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import logo from '../public/filter_logo.png';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+//import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+//import { DateRangePicker } from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 function Filter() {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +16,8 @@ function Filter() {
     return (
       <>
         <button onClick={handleClick}>Filter</button>
+          <img src={logo} alt="Filter" />
+          <span>Filter</span>
         {isOpen && <FilterPopup />}
       </>
     );
@@ -20,6 +28,12 @@ function Filter() {
     const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
   
     const [displayState, setDisplayState] = useState(null);
+    const [dateRange, setDateRange] = useState([null, null]);
+
+    const handleDateRangeChange = (newValue) => {
+      setDateRange(newValue);
+    };
+    
 
     const [formState, setFormState] = useState({
       location: '',
@@ -43,8 +57,8 @@ function Filter() {
     return (
       <div className="filter-popup">
         <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
-        Please fill out your Concert Filter Preferences:
-        <div style={{paddingTop:'1%'}}>
+          Please fill out your Concert Filter Preferences:
+          <div style={{paddingTop:'1%'}}>
             <label htmlFor="location">Location</label>
             <input type="text" id="location" name="location" value={formState.location} onChange={handleChange}  placeholder="Where do you want to find a concert?"  />
           </div>
@@ -56,17 +70,26 @@ function Filter() {
             <label htmlFor="priceCeiling">Most Expensive Price Preference</label>
             <input type="text" id="priceCeiling" name="priceCeiling" value={formState.priceCeiling} onChange={handleChange}  placeholder="Higher Price Range"/>
           </div>
-           <div>
-            <label htmlFor="startDate">Start Date</label>
-            <input type="text" id="startDate" name="startDate" value={formState.startDate} onChange={handleChange}  placeholder="Start Date displayed as MM/DD/YYYY"/>
-          </div>
-          <div>
-            <label htmlFor="endDate">End Date</label>
-            <input type="text" id="endDate" name="endDate" value={formState.endDate} onChange={handleChange} placeholder="End Date displayed as MM/DD/YYYY"/>
-          </div>
-          <div>
-
-          </div>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateRangePicker
+              startText="Start date"
+              endText="End date"
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              renderInput={(startProps, endProps) => (
+                <>
+                  <input
+                    {...startProps.inputProps}
+                    placeholder="Start Date"
+                  />
+                  <input
+                    {...endProps.inputProps}
+                    placeholder="End Date"
+                  />
+                </>
+              )}
+            />
+          </LocalizationProvider>
           <button type="submit">Submit</button>
         </form>
       </div>
