@@ -1,6 +1,5 @@
-// import { Auth, ThemeSupa } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
-import Account from '../components/Account'
+import Cycler from '../components/Cycler'
 import ReactCurvedText from "react-curved-text";
 import styles from '@/styles/Home.module.css'
 
@@ -33,7 +32,7 @@ const Home = () => {
     })
 
   }
-  
+
   return (
     <>
       {!session ? (
@@ -70,7 +69,7 @@ const Home = () => {
 
         </main>
       ) : (
-        <Account session={session} />
+        <Cycler session={session} />
       )}
     </>
   )
