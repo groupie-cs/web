@@ -5,7 +5,7 @@ import { Spotify } from '../components/Spotify'
 import { Ticketmaster } from './Ticketmaster'
 import ArtistData from './ArtistData'
 import ConcertData from './ConcertData'
-import FilterData from './FilterData'
+import Filter from './filter'
 
 
 export default function Account({ session }) {
@@ -109,9 +109,9 @@ export default function Account({ session }) {
         if (activeComponent === 'artistData') {
           setActiveComponent('concertData')
         } else if (activeComponent === 'concertData') {
-          setActiveComponent('filterData')
+          setActiveComponent('filter')
         } else {
-          setActiveComponent('filterData')
+          setActiveComponent('filter')
         }
       }
 
@@ -158,11 +158,17 @@ export default function Account({ session }) {
                 </div>
             </div>
 
+            {/* <div className={styles.center}>
+                <div className={styles.app}>
+                    <Filter></Filter>
+                </div>
+            </div> */}
+
             {/* add arrow buttons */}
 
         {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
         {activeComponent === 'concertData' && <ConcertData recData={recData} />}
-        {activeComponent === 'filterData' && <FilterData />}
+        {/* {activeComponent === 'filter' && <Filter />} */}
 
         <div>
             <button onClick={handlePrevClick}><i className="arrow left"></i></button>

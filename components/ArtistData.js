@@ -1,12 +1,15 @@
 import React from 'react'
 import styles from '@/styles/Home.module.css'
+import Filter from './filter'
 
 export default function ArtistData({ artistData }) {
     return (
         <div className={styles.center}>
+            <Filter></Filter>
             <div className={styles.app}>
                 <h1>Lets look through your tastes</h1>
                 <div className={styles.hs}>
+                    
                     {artistData && artistData.items.map((artist) => {
                         return (
                             <div className={styles.card} key={artist.id}>
