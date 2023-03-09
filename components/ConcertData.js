@@ -4,8 +4,7 @@ import Filter from './filter'
 import GroupData from './GroupData'
 
 export default function ConcertData({ recData, session, groupId }) {
-    console.log("WE ARE IN CONSERT DATA")
-    console.log(recData)
+   
     return (
         <div className={styles.center}>
             <div className={styles.app}>

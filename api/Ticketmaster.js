@@ -14,6 +14,7 @@ export class Ticketmaster {
         const modEndDate = endDate
         const modLocation = city
         
+        
         const url = "https://app.ticketmaster.com/discovery/v2/events.json?size=10" + 
             "&apikey=" + apikey +
             "&classificationName=" + classificationName +
