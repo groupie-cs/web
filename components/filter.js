@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from "@mui/x-date-pickers";
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 
 import styles from '@/styles/Home.module.css'
 
@@ -61,6 +62,8 @@ export default function Filter() {
 }
 
 function FilterPopup() {
+  const supabase = useSupabaseClient();
+  const user = useUser()
 
   const url = 'https://app.ticketmaster.com/discovery/v2/events.json?size=1&apikey=M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso&classificationName=music'
 
@@ -90,6 +93,7 @@ function FilterPopup() {
   const handleSubmit = (event) => {
     event.preventDefault();
     setDisplayState(formState);
+    const filters = [displayState.location, displayState.priceFloor, displayState.priceCeiling, displayState.dateRange]
   }
   return (
     <form onSubmit={handleSubmit} style={{ textAlign: 'center' }}>
@@ -124,4 +128,3 @@ function FilterPopup() {
     </form>
   )
 }
-

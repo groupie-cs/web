@@ -58,9 +58,20 @@ export default function Cycler({ session }) {
             setArtistData(artistData)
             const topGenres = spotify.getTopGenres(artistData, 4)
             console.log(topGenres)
-            const recs = await ticketmaster.getConcerts("Chicago", topGenres)
+            const recs = await ticketmaster.getConcerts("Chicago", "Rap")
             setRecData(recs)
             console.log(recs)
+
+            if (group_id != null) {
+                const { newError } = await supabase
+                    .from('groups')
+                    .upsert({ concert_recs: supabase.sql`array_append(concert_recs, ${recs})` })
+                    .eq('group_id', group_id);
+
+                if (newError) throw newError;
+            }
+
+            
 
         } catch (error) {
             alert('Error loading user data!')
