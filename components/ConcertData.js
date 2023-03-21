@@ -44,10 +44,8 @@ export default function ConcertData({ recData }) {
                                     rec.images.sort((a, b) => b.width - a.width)[0].url
                                 } alt={rec.name} />
                                 <div className={styles.concertDetails}>
-                                    <h2>{rec.name.length > 30 ? rec.name.substring(0, 30) + "..." : rec.name}</h2>
-                                    <h3>{rec._embedded.venues[0].city.name} - {rec._embedded.venues[0].name}</h3>
-                                    {/* if min price and max price are the same dont display them */}
-                                    
+                                    <h2>{rec.name.length > 45 ? rec.name.substring(0, 45) + "..." : rec.name}</h2>
+                                    <h3>{rec._embedded.venues[0].city.name} - {rec._embedded.venues[0].name}</h3>                                    
                                     {rec.priceRanges && <h3>${rec.priceRanges[0].min} - ${rec.priceRanges[0].max}</h3>}
                                 </div>
                             </div>

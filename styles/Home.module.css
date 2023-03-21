@@ -210,7 +210,7 @@
 .concertcard {
   /*make items in this div horizontally alligned in a grid */
   display: grid;
-  grid-template-columns: 0.5fr 1fr;
+  grid-template-columns: 0.33fr 1fr;
 }
 
 .concertDetails {
