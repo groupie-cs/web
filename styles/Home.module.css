@@ -96,6 +96,7 @@
   align-items: flex-start;
   /*put max space between items*/
   justify-content: space-between;
+  padding: 10px;
 }
 
 .artistimg {
@@ -161,10 +162,14 @@
 }
 
 .concertrecomendations {
+  background: #e8d6cb;
+  border-radius: var(--border-radius);
+}
+
+.scroller {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 10px;
-  background: #e8d6cb;
   border-radius: var(--border-radius);
   padding: 6px;
   max-height: 80vh;

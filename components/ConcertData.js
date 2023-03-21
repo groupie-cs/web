@@ -35,7 +35,7 @@ export default function ConcertData({ recData }) {
                     <h2>Concerts</h2>
                     <DialogSelect></DialogSelect>
                 </div>
-                {/* <div className={styles.hs}> */}
+                <div className={styles.scroller}>
                 {recData && recData._embedded.events.map((rec) => {
                     return (
                         <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
@@ -52,7 +52,7 @@ export default function ConcertData({ recData }) {
                         </a>
                     )
                 })}
-                {/* </div> */}
+                </div>
             </div>
         </div>
     )
