@@ -62,13 +62,22 @@ export default function Cycler({ session }) {
             setRecData(recs)
             console.log(recs)
 
-            if (group_id != null) {
-                const { newError } = await supabase
-                    .from('groups')
-                    .upsert({ concert_recs: supabase.sql`array_append(concert_recs, ${recs})` })
-                    .eq('group_id', group_id);
+            
 
-                if (newError) throw newError;
+            if (group_id != null) {
+
+                // const { error: updateError } = await supabase
+                //     .from('groups')
+                //     .update({concert_recs: recs})
+                //     .eq('group_id', group_id);
+
+                // if (updateError) throw updateError
+                // const { newError } = await supabase
+                //     .from('groups')
+                //     .upsert({ concert_recs: supabase.sql`array_append(concert_recs, ${recs})` })
+                //     .eq('group_id', group_id);
+
+                // if (newError) throw newError;
             }
 
             

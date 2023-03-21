@@ -10,7 +10,7 @@ export default function ConcertData({ recData, session, groupId }) {
         <div className={styles.center}>
             <div className={styles.app}>
                 <h1>Lets look at some concerts</h1>
-                <DialogSelect></DialogSelect>
+                <DialogSelect session={session} groupId={groupId}></DialogSelect>
                 <div className={styles.hs}>
                     {recData && recData._embedded.events.map((rec) => {
                         return (
