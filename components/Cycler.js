@@ -58,16 +58,21 @@ export default function Cycler({ session }) {
             console.log(topGenres)
             const recs = await ticketmaster.getConcerts("Chicago", topGenres)
             setRecData(recs)
+
             console.log(recs)
 
             // remove any recs from recs if there are two with the same name
             for (let i = 0; i < recs._embedded.events.length; i++) {
+                console.log("in the looper")
                 for (let j = i + 1; j < recs._embedded.events.length; j++) {
                     if (recs._embedded.events[i].name == recs._embedded.events[j].name) {
+                        console.log("in the if")
                         recs._embedded.events.splice(j, 1)
                     }
                 }
             }
+
+            console.log(recs)
 
         } catch (error) {
             alert('Error loading user data!')
@@ -131,10 +136,10 @@ export default function Cycler({ session }) {
             {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
             {activeComponent === 'concertData' && <ConcertData recData={recData} />}
 
-            <div>
+            {activeComponent != 'concertData' && <div>
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>
                 <button onClick={handleNextClick}><i className="arrow right"></i></button>
-            </div>
+            </div>}
 
         </div>
     )
