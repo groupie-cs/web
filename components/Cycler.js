@@ -56,6 +56,14 @@ export default function Cycler({ session }) {
             setArtistData(artistData)
             const topGenres = spotify.getTopGenres(artistData, 10)
             console.log(topGenres)
+            // remove empty strings from topGenres
+            for (let i = 0; i < topGenres.length; i++) {
+                if (topGenres[i] == "") {
+                    topGenres.splice(i, 1)
+                }
+            }
+            console.log(topGenres)
+            
             const recs = await ticketmaster.getConcerts("Chicago", topGenres)
             setRecData(recs)
 

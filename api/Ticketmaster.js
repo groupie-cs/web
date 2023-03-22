@@ -14,14 +14,15 @@ export class Ticketmaster {
         const modEndDate = endDate
         const modLocation = city
         
-        const url = "https://app.ticketmaster.com/discovery/v2/events.json?size=10" + 
+        const url = "https://app.ticketmaster.com/discovery/v2/events.json?size=15" + 
             "&apikey=" + apikey +
             "&classificationName=" + classificationName +
             "&keyword=" + keyword +
             "&radius=" + radius +
             "&startDateTime=" + modStartDate +
             "&endDateTime=" + modEndDate +
-            "&city=" + modLocation
+            "&city=" + modLocation +
+            "&sort=relevance,asc"
 
         console.log("Calling TicketMaster")
         const recs = await (
