@@ -54,11 +54,20 @@ export default function Cycler({ session }) {
 
             const artistData = await spotify.getTopArtists(session)
             setArtistData(artistData)
-            const topGenres = spotify.getTopGenres(artistData, 4)
+            const topGenres = spotify.getTopGenres(artistData, 10)
             console.log(topGenres)
             const recs = await ticketmaster.getConcerts("Chicago", topGenres)
             setRecData(recs)
             console.log(recs)
+
+            // remove any recs from recs if there are two with the same name
+            for (let i = 0; i < recs._embedded.events.length; i++) {
+                for (let j = i + 1; j < recs._embedded.events.length; j++) {
+                    if (recs._embedded.events[i].name == recs._embedded.events[j].name) {
+                        recs._embedded.events.splice(j, 1)
+                    }
+                }
+            }
 
         } catch (error) {
             alert('Error loading user data!')
