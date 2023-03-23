@@ -19,6 +19,7 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useState, useRef } from "react";
 
 const filterIcon = <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path fillRule="evenodd" clipRule="evenodd" d="M20 5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V6.58579C4 6.851 4.10536 7.10536 4.29289 7.29289L8.7071 11.7071C8.89464 11.8946 8.99999 12.149 8.99999 12.4142V19.3063C8.99999 19.6476 9.33434 19.8886 9.65811 19.7806L14.6581 18.114C14.8623 18.0459 15 17.8548 15 17.6396V12.4142C15 12.149 15.1054 11.8946 15.2929 11.7071L19.7071 7.29289C19.8946 7.10536 20 6.851 20 6.58579V5Z" fill="#2A4157" fillOpacity="0.24" />
@@ -82,24 +83,10 @@ export default function DialogSelect({session, groupId}) {
   const [lng, setLng] = React.useState(null);
   const [status, setStatus] = React.useState(null);
   const [city, setCity] = React.useState("Loading Location");
-
+  const [displayState, setDisplayState] = useState(null);
   const supabase = useSupabaseClient()
 
-  const handleDateRangeChange = (newValue) => {
-    setDateRange(newValue);
-  };
-
-  const handleMinPriceChange = (newValue) => {
-    setMinPrice(newValue);
-  };
-
-  const handleMaxPriceChange = (newValue) => {
-    setMaxPrice(newValue);
-  };
-
-  const handleChange = (event) => {
-    setAge(Number(event.target.value) || '');
-  };
+  const inputRef = useRef(null);
 
   React.useEffect(() => {
     getLocation();
@@ -119,6 +106,7 @@ export default function DialogSelect({session, groupId}) {
   //TODO HERE
   //ADD FORMSTATE TO TRACK UPDATES TO FILTER AS SEEN IN FILTER.JS
   //THEN USE FORMSTATES TO UPDATE THE SUPABASE WITH NEW USER FILTERS
+  
   async function updateFilters(filterArray) {
     if (groupId != null) {
 
@@ -131,15 +119,6 @@ export default function DialogSelect({session, groupId}) {
     
     }
   }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("SUBMITTED FILTER")
-    const filterUser = [city, MinPriceInput.value, MaxPriceInput.value, dateRange];
-    console.log(filterUser)
-    updateFilters(filterUser);
-  }
-
 
   const LocationInput = styled(InputBase)(({ theme }) => ({
     'label + &': {
@@ -246,16 +225,6 @@ export default function DialogSelect({session, groupId}) {
     },
   }));
 
-
-
-  MinPriceInput.defaultProps = {
-    defaultValue: '$0',
-  };
-
-  MaxPriceInput.defaultProps = {
-    defaultValue: '$0',
-  };
-
   const getLocation = () => {
     if (!navigator.geolocation) {
       setStatus('Geolocation is not supported by your browser');
@@ -305,6 +274,57 @@ export default function DialogSelect({session, groupId}) {
     defaultValue: city,
   };
 
+
+
+
+
+  const handleDateRangeChange = (newValue) => {
+    setDateRange(newValue);
+  };
+
+  const handleMinPriceChange = (event) => {
+    console.log("IN HANDLE MIN PRICE")
+    console.log(event.value);
+    setMinPrice(event.current.value);
+  }
+
+ 
+
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  }
+
+  const [formState, setFormState] = useState({
+    location: '',
+    minPrice: '',
+    maxPrice: '',
+  });
+
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("SUBMITTED FILTER")
+    const filterUser = [displayState.location, displayState.minPrice, displayState.maxPrice, dateRange];
+    console.log(filterUser)
+    //updateFilters(filterUser);
+  }
+
+  
+  MinPriceInput.defaultProps = {
+    placeholder:'$0',
+   
+  };
+
+  // MaxPriceInput.defaultProps = {
+  //   defaultValue: '$0',
+  // };
+
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -324,57 +344,75 @@ export default function DialogSelect({session, groupId}) {
         >
           <DialogTitle>Filter Concerts</DialogTitle>
           <DialogContent>
-            <Box component="form" sx={{ display: 'grid' }}>
-              <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
-                <InputLabel htmlFor="demo-customized-textbox">Location</InputLabel>
-                <LocationInput id="demo-customized-textbox" />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="demo-customized-textbox">Minimum Price</InputLabel>
-                <MinPriceInput 
-                id="demo-customized-textbox"
-                />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="demo-customized-textbox">Maximum Price</InputLabel>
-                <MaxPriceInput id="demo-customized-textbox" 
-                />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start Search Date"
-                    value={dateRange}
-                    onChange={handleDateRangeChange}
-                    borderColor="white"
-                    renderInput={(startProps) => (
-                      <>
-                        <input
-                          {...startProps.inputProps}
-                        />
-                      </>
-                    )}
+            <div ref={inputRef}>
+              <Box component="form" sx={{ display: 'grid' }}>
+                <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
+                  <InputLabel htmlFor="location">Location</InputLabel>
+                  <LocationInput
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formState.location}
+                  onChange={handleChange}
+                  placeholder='Chicago'
                   />
-                </LocalizationProvider>
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="End Search Date"
-                    value={dateRange}
-                    onChange={handleDateRangeChange}
-                    renderInput={(startProps) => (
-                      <>
-                        <input
-                          {...startProps.inputProps}
-                          placeholder="End Search Date"
-                        />
-                      </>
-                    )}
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <InputLabel htmlFor="minPrice">Minimum Price</InputLabel>
+                  <MinPriceInput
+                  id="minPrice"
+                  name="minPrice"
+                  value={formState.minPrice}
+                  onChange={handleChange}
                   />
-                </LocalizationProvider>
-              </FormControl>
-            </Box>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <InputLabel htmlFor="maxPrice">Maximum Price</InputLabel>
+                  <MaxPriceInput
+                  id="maxPrice"
+                  name="maxPrice"
+                  value={formState.maxPrice}
+                  onChange={handleChange}
+                
+                  />
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Start Search Date"
+                      value={dateRange}
+                      onChange={handleDateRangeChange}
+                      borderColor="white"
+                      renderInput={(startProps) => (
+                        <>
+                          <input
+                            {...startProps.inputProps}
+                          />
+                        </>
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="End Search Date"
+                      value={dateRange}
+                      onChange={handleDateRangeChange}
+                      renderInput={(startProps) => (
+                        <>
+                          <input
+                            {...startProps.inputProps}
+                            placeholder="End Search Date"
+                          />
+                        </>
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+              </Box>
+            </div>
+            
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
