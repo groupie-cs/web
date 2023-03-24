@@ -20,6 +20,7 @@ export default function Cycler({ session }) {
     const ticketmaster = new Ticketmaster()
     const [activeComponent, setActiveComponent] = useState('artistData')
 
+
     useEffect(() => {
         getProfile()
     }, [session])
@@ -62,9 +63,30 @@ export default function Cycler({ session }) {
             setRecData(recs)
             console.log(recs)
 
-            
+            //console.log("GOT PROFILE")
+           // console.log("GROUP ID " + group_id)
+           // if (group_id != null) {
 
-            if (group_id != null) {
+                // let { data, error} = await supabase
+                // .from('groups')
+                // .select(`concert_recs`)
+                // .eq('group_id', group_id)
+                // .single()
+
+                // if (error) throw error;
+
+                // let arr = data.concert_recs;
+                // arr = arr.push(recs);
+
+                // const { error: updateError } = await supabase
+                //     .from('groups')
+                //     .upsert({concert_recs: arr})
+                //     .eq('group_id', group_id);
+                    
+                // if (updateError) throw updateError
+
+                //console.log("UPDATED GROUP CONCERT RECS")
+                
 
                 // const { error: updateError } = await supabase
                 //     .from('groups')
@@ -78,7 +100,7 @@ export default function Cycler({ session }) {
                 //     .eq('group_id', group_id);
 
                 // if (newError) throw newError;
-            }
+           // }
 
             
 
@@ -142,7 +164,7 @@ export default function Cycler({ session }) {
             </div>
 
             {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
-            {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} />}
+            {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
 
 
             <div>

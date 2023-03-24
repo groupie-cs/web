@@ -4,7 +4,7 @@ import styles from '@/styles/Home.module.css'
 
 import { v4 as uuidv4 } from 'uuid';
 
-export default function GroupData( {session, groupId} ) {
+export default function GroupData( {session, groupId, recs} ) {
     const supabase = useSupabaseClient()
     const user = useUser()
     const [loading, setLoading] = useState(true)
@@ -170,6 +170,25 @@ export default function GroupData( {session, groupId} ) {
             .eq('group_id', inviteId);
 
             if (newError) throw newError
+
+            let { newData, addError} = await supabase
+                .from('groups')
+                .select(`concert_recs`)
+                .eq('group_id', group_id)
+                .single()
+
+                if (addError) throw addError;
+
+                let arr = newData.concert_recs;
+                arr = arr.push(recs);
+
+                const { error: updateError } = await supabase
+                    .from('groups')
+                    .upsert({concert_recs: arr})
+                    .eq('group_id', group_id);
+                    
+                if (updateError) throw updateError
+
 
             alert('Profile updated!')
         } catch (error) {

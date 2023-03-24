@@ -16,7 +16,7 @@ import Geocode from "react-geocode";
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
+import '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useRef } from "react";
@@ -69,6 +69,13 @@ const theme = createTheme({
           color
         }
       }
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          color
+        }
+      }
     }
   }
 });
@@ -97,6 +104,7 @@ export default function DialogSelect({session, groupId}) {
   };
 
   const handleClose = (event, reason) => {
+    console.log("CLOSED")
     // if (reason !== 'backdropClick') {
     setOpen(false);
     // }
@@ -150,7 +158,7 @@ export default function DialogSelect({session, groupId}) {
       '&:focus': {
         borderRadius: 12,
         borderColor: '#FFFFFF',
-        // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+       // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
       },
     },
   }));
@@ -217,13 +225,15 @@ export default function DialogSelect({session, groupId}) {
         '"Segoe UI Emoji"',
         '"Segoe UI Symbol"',
       ].join(','),
-      '&:focus': {
-        borderRadius: 12,
-        borderColor: '#FFFFFF',
-        // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      },
+      // '&:focus': {
+      //   borderRadius: 12,
+      //   borderColor: '#FFFFFF',
+      //   // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+      // },
     },
   }));
+
+
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -270,10 +280,6 @@ export default function DialogSelect({session, groupId}) {
     }
   }
 
-  LocationInput.defaultProps = {
-    defaultValue: city,
-  };
-
 
 
 
@@ -281,14 +287,6 @@ export default function DialogSelect({session, groupId}) {
   const handleDateRangeChange = (newValue) => {
     setDateRange(newValue);
   };
-
-  const handleMinPriceChange = (event) => {
-    console.log("IN HANDLE MIN PRICE")
-    console.log(event.value);
-    setMinPrice(event.current.value);
-  }
-
- 
 
 
   const handleChange = (event) => {
@@ -309,21 +307,11 @@ export default function DialogSelect({session, groupId}) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("SUBMITTED FILTER")
+    setDisplayState(formState);
     const filterUser = [displayState.location, displayState.minPrice, displayState.maxPrice, dateRange];
     console.log(filterUser)
     //updateFilters(filterUser);
   }
-
-  
-  MinPriceInput.defaultProps = {
-    placeholder:'$0',
-   
-  };
-
-  // MaxPriceInput.defaultProps = {
-  //   defaultValue: '$0',
-  // };
-
 
   return (
     <div>
@@ -348,8 +336,10 @@ export default function DialogSelect({session, groupId}) {
               <Box component="form" sx={{ display: 'grid' }}>
                 <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
                   <InputLabel htmlFor="location">Location</InputLabel>
-                  <LocationInput
+                  <InputBase
+                  classname="filter-input"
                   type="text"
+                  inputProps={{ step: 'any' }}
                   id="location"
                   name="location"
                   value={formState.location}
@@ -360,6 +350,7 @@ export default function DialogSelect({session, groupId}) {
                 <FormControl sx={{ m: 1 }} variant="standard">
                   <InputLabel htmlFor="minPrice">Minimum Price</InputLabel>
                   <MinPriceInput
+                  type="text"
                   id="minPrice"
                   name="minPrice"
                   value={formState.minPrice}
@@ -369,6 +360,7 @@ export default function DialogSelect({session, groupId}) {
                 <FormControl sx={{ m: 1 }} variant="standard">
                   <InputLabel htmlFor="maxPrice">Maximum Price</InputLabel>
                   <MaxPriceInput
+                  type="text"
                   id="maxPrice"
                   name="maxPrice"
                   value={formState.maxPrice}
