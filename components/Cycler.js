@@ -141,7 +141,7 @@ export default function Cycler({ session }) {
                 </div>
             </div>
 
-            {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
+            {activeComponent === 'artistData' && <ArtistData artistData={artistData} session={session}/>}
             {activeComponent === 'concertData' && <ConcertData recData={recData} />}
 
             {activeComponent != 'concertData' && <div>

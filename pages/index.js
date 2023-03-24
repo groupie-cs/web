@@ -26,7 +26,7 @@ const Home = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'spotify',
       options: {
-        scopes: 'user-top-read',
+        scopes: 'user-top-read streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state',
         redirectTo: window.location.origin
       }
     })
