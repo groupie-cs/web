@@ -85,44 +85,19 @@ export default function Cycler({ session }) {
 
             console.log(recs)
 
-            //console.log("GOT PROFILE")
-           // console.log("GROUP ID " + group_id)
-           // if (group_id != null) {
+            
+           if (group_id != null) {
 
-                // let { data, error} = await supabase
-                // .from('groups')
-                // .select(`concert_recs`)
-                // .eq('group_id', group_id)
-                // .single()
+                let { data, error} = await supabase
+                .from('groups')
+                .select(`concert_recs`)
+                .eq('group_id', group_id)
+                .single()
 
-                // if (error) throw error;
+                if (error) throw error;
 
-                // let arr = data.concert_recs;
-                // arr = arr.push(recs);
-
-                // const { error: updateError } = await supabase
-                //     .from('groups')
-                //     .upsert({concert_recs: arr})
-                //     .eq('group_id', group_id);
-                    
-                // if (updateError) throw updateError
-
-                //console.log("UPDATED GROUP CONCERT RECS")
-                
-
-                // const { error: updateError } = await supabase
-                //     .from('groups')
-                //     .update({concert_recs: recs})
-                //     .eq('group_id', group_id);
-
-                // if (updateError) throw updateError
-                // const { newError } = await supabase
-                //     .from('groups')
-                //     .upsert({ concert_recs: supabase.sql`array_append(concert_recs, ${recs})` })
-                //     .eq('group_id', group_id);
-
-                // if (newError) throw newError;
-           // }
+                setRecData(data.concert_recs)
+           }
 
             
 

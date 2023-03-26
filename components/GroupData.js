@@ -182,6 +182,18 @@ export default function GroupData( {session, groupId, recs} ) {
                 let arr = newData.concert_recs;
                 arr = arr.push(recs);
 
+
+                //Remove Duplicates
+                // for (let i = 0; i < arr.length; i++) {
+                //     console.log("in the looper")
+                //     for (let j = i + 1; j < arr.length; j++) {
+                //         if (arr[i].name == arr[j].name) {
+                //             console.log("in the if")
+                //             arr = arr.splice(j, 1)
+                //         }
+                //     }
+                // }
+
                 const { error: updateError } = await supabase
                     .from('groups')
                     .upsert({concert_recs: arr})

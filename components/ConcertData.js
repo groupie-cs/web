@@ -1,20 +1,15 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import styles from '@/styles/Home.module.css'
 import Filter from './filter'
 import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
 
+
 export default function ConcertData({ recData, session, groupId }) {
-   
+
     return (
         <div className={styles.homepage}>
-
-            
-
-
-
             <div className={styles.group}>
-
                 <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
             </div>
 
@@ -22,7 +17,7 @@ export default function ConcertData({ recData, session, groupId }) {
             <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
                     <h2>Concerts</h2>
-                    <DialogSelect></DialogSelect>
+                    <DialogSelect groupId={groupId}></DialogSelect>
                 </div>
                 <div className={styles.scroller}>
                 {recData && recData._embedded.events.map((rec) => {
