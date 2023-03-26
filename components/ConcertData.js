@@ -7,40 +7,15 @@ import DialogSelect from './DialogSelect'
 export default function ConcertData({ recData, session, groupId }) {
    
     return (
-        // <div className={styles.center}>
-        //     <div className={styles.app}>
-        //         <h1>Lets look at some concerts</h1>
-        //         <DialogSelect session={session} groupId={groupId}></DialogSelect>
-        //         <div className={styles.hs}>
-        //             {recData && recData._embedded.events.map((rec) => {
-        //                 return (
-        //                     <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
-        //                         {/*Cut rec.name if it is too long */}
-        //                         <h2>{rec.name.length > 20 ? rec.name.substring(0, 20) + "..." : rec.name}</h2>
-        //                         <img className={styles.artistimg} src={
         <div className={styles.homepage}>
 
+            
+
+
+
             <div className={styles.group}>
-                <h2>Group Members</h2>
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
 
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
+                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
             </div>
 
 
@@ -69,7 +44,7 @@ export default function ConcertData({ recData, session, groupId }) {
                 </div>
             </div>
 
-            <GroupData session={session} groupId={groupId}></GroupData>
+            
         </div>
     )
 }

@@ -240,7 +240,10 @@ export default function GroupData( {session, groupId, recs} ) {
     }
 
     return(
-        <div className={styles.main}>
+        <div className={styles.homePage}>
+
+        
+        <div className={styles.group}>
              <div>
                 {!isAdmin ? (
                     <button
@@ -258,23 +261,29 @@ export default function GroupData( {session, groupId, recs} ) {
                 )}
             </div>
 
-            Your Group
+            <h2>Group Members</h2>
            
-           <div className={styles.grid}>
+          
+
+            
             {groupData && groupData.map((member) => {
                 return (
+
+                   
                     <div key={member.id}>
-                        <div className={styles.card}>
-                            <h2>{member.username}</h2>
-                            <img className={styles.artistImage} src={member.avatar_url} alt={`${member.username}'s avatar`} />
+                       <div className={styles.groupcard}>
+                            <img className={styles.groupimg} src={member.avatar_url} alt={`${member.username}'s avatar`} />
+                            <h3 className={styles.cardtext}>{member.username}</h3>
                             <button onClick={() => removeUser(member.id)}>Remove</button>
-                        </div>
+                       </div>
                     </div>
+                    
                 )
             })}
-           </div>
+        
 
 
+        </div>
         </div>
     )
 
