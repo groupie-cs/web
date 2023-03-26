@@ -248,7 +248,7 @@ export default function DialogSelect({session, groupId}) {
         setLng(position.coords.longitude);
         console.log("Location Retrived!");
         console.log(position);
-        Geocode.setApiKey(process.env.GOOGLE_MAPS_API_KEY);
+        Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
         Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
           (response) => {
             const address = response.results[0].formatted_address;
