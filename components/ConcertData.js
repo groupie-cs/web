@@ -1,5 +1,7 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import styles from '@/styles/Home.module.css'
+import Filter from './filter'
+import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
 import Cycler from './Cycler'
 import { useState, useEffect } from 'react'
@@ -75,7 +77,7 @@ export default function ConcertData({ recData }) {
             <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
                     <h2>Concerts</h2>
-                    <DialogSelect></DialogSelect>
+                    <DialogSelect groupId={groupId}></DialogSelect>
                 </div>
                 <div className={styles.scroller}>
                 {recData && recData._embedded.events.map((rec) => {
