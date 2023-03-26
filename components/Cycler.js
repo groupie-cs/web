@@ -147,7 +147,6 @@ export default function Cycler({ session }) {
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>
                 <button onClick={handleNextClick}><i className="arrow right"></i></button>
             </div>}
-
         </div>
     )
 }
