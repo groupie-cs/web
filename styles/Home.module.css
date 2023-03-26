@@ -41,6 +41,15 @@
   top: 25%;
 }
 
+
+.artistSongTitle {
+  font-size: 1.2rem;
+  font-weight: 30;
+  font-family: var(--font-mono);
+  color: white;
+  padding: 12px;
+}
+
 .titleicon {
   font-size: 3.5rem;
   font-weight: 600;
@@ -85,6 +94,14 @@
 .concertimg {
   width: 180px;
   height: 140px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+
+}
+
+.artistsongimg {
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: var(--border-radius);
 
@@ -304,6 +321,21 @@
   ;
   padding: 1rem;
   border-radius: 0.5rem;
+}
+
+.artistSongs{
+  /*make text bold */
+  display: grid;
+  grid-template-columns: 0.1fr 1fr 0.5fr;
+  padding: 6px;
+}
+
+.playerText {
+  font-size: 2.2rem;
+  font-weight: 30;
+  font-family: var(--font-mono);
+  color: white;
+  /* padding: 12px; */
 }
 
 

@@ -15,6 +15,12 @@ export class Spotify {
             })
         ).json()
 
+        for (let i = 0; i < topArtists.limit; i++) {
+            const topSongs = await this.getTopSong(session, topArtists.items[i].id)
+            topArtists.items[i]["topSongs"] = topSongs
+        }
+    
+
         return topArtists
     }
 
@@ -73,5 +79,20 @@ export class Spotify {
 
 
         return recTracks
+    }
+
+    async getTopSong(session, artistID) {
+        const { provider_token, user } = session
+        const url = 'https://api.spotify.com/v1/artists/' + artistID + '/top-tracks?market=US'
+        const topSong = await (
+            await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${provider_token}`
+                },
+            })
+        ).json()
+
+        return topSong
     }
 }
