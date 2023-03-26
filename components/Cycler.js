@@ -57,10 +57,32 @@ export default function Cycler({ session }) {
 
             const artistData = await spotify.getTopArtists(session)
             setArtistData(artistData)
-            const topGenres = spotify.getTopGenres(artistData, 4)
+            const topGenres = spotify.getTopGenres(artistData, 10)
             console.log(topGenres)
-            const recs = await ticketmaster.getConcerts("Chicago", "Rap")
+            // remove empty strings from topGenres
+            for (let i = 0; i < topGenres.length; i++) {
+                if (topGenres[i] == "") {
+                    topGenres.splice(i, 1)
+                }
+            }
+            console.log(topGenres)
+            
+            const recs = await ticketmaster.getConcerts("Chicago", topGenres)
             setRecData(recs)
+
+            console.log(recs)
+
+            // remove any recs from recs if there are two with the same name
+            for (let i = 0; i < recs._embedded.events.length; i++) {
+                console.log("in the looper")
+                for (let j = i + 1; j < recs._embedded.events.length; j++) {
+                    if (recs._embedded.events[i].name == recs._embedded.events[j].name) {
+                        console.log("in the if")
+                        recs._embedded.events.splice(j, 1)
+                    }
+                }
+            }
+
             console.log(recs)
 
             //console.log("GOT PROFILE")
@@ -167,10 +189,10 @@ export default function Cycler({ session }) {
             {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
 
 
-            <div>
+            {activeComponent != 'concertData' && <div>
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>
                 <button onClick={handleNextClick}><i className="arrow right"></i></button>
-            </div>
+            </div>}
 
         </div>
     )
