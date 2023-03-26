@@ -160,9 +160,8 @@ export default function Cycler({ session }) {
                 </div>
             </div>
 
-            {activeComponent === 'artistData' && <ArtistData artistData={artistData} />}
+            {activeComponent === 'artistData' && <ArtistData artistData={artistData} session={session}/>}
             {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
-
 
             {activeComponent != 'concertData' && <div>
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>

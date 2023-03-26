@@ -26,5 +26,6 @@
     "react-router-dom": "^6.8.1",
     "shortid": "^2.2.16",
     "uuidv4": "^6.2.13"
+    "react-spotify-web-playback": "^0.13.4",
   }
 }
