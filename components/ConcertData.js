@@ -1,39 +1,23 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import styles from '@/styles/Home.module.css'
+import Filter from './filter'
+import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
 
-export default function ConcertData({ recData }) {
+
+export default function ConcertData({ recData, session, groupId }) {
+
     return (
         <div className={styles.homepage}>
-
             <div className={styles.group}>
-                <h2>Group Members</h2>
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
+                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
             </div>
 
 
             <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
                     <h2>Concerts</h2>
-                    <DialogSelect></DialogSelect>
+                    <DialogSelect groupId={groupId}></DialogSelect>
                 </div>
                 <div className={styles.scroller}>
                 {recData && recData._embedded.events.map((rec) => {
@@ -54,6 +38,8 @@ export default function ConcertData({ recData }) {
                 })}
                 </div>
             </div>
+
+            
         </div>
     )
 }

@@ -16,8 +16,10 @@ import Geocode from "react-geocode";
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
+import '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useState, useRef } from "react";
 
 const filterIcon = <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path fillRule="evenodd" clipRule="evenodd" d="M20 5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V6.58579C4 6.851 4.10536 7.10536 4.29289 7.29289L8.7071 11.7071C8.89464 11.8946 8.99999 12.149 8.99999 12.4142V19.3063C8.99999 19.6476 9.33434 19.8886 9.65811 19.7806L14.6581 18.114C14.8623 18.0459 15 17.8548 15 17.6396V12.4142C15 12.149 15.1054 11.8946 15.2929 11.7071L19.7071 7.29289C19.8946 7.10536 20 6.851 20 6.58579V5Z" fill="#2A4157" fillOpacity="0.24" />
@@ -67,26 +69,138 @@ const theme = createTheme({
           color
         }
       }
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          color
+        }
+      }
     }
   }
 });
 
-export default function DialogSelect() {
+const LocationInput = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    color: 'white',
+    borderRadius: 12,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '1px solid #FFFFFF',
+    fontSize: 16,
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '"Inter"',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      borderRadius: 12,
+      borderColor: '#FFFFFF',
+     // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}));
+
+const MinPriceInput = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    color: 'white',
+    borderRadius: 12,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '1px solid #FFFFFF',
+    fontSize: 16,
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '"Inter"',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      borderRadius: 12,
+      borderColor: '#FFFFFF',
+      // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}));
+
+const MaxPriceInput = styled(InputBase)(({ theme }) => ({
+  'label + &': {
+    marginTop: theme.spacing(3),
+  },
+  '& .MuiInputBase-input': {
+    color: 'white',
+    borderRadius: 12,
+    position: 'relative',
+    // backgroundColor: theme.palette.background.paper,
+    border: '1px solid #FFFFFF',
+    fontSize: 16,
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '"Inter"',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:focus': {
+      borderRadius: 12,
+      borderColor: '#FFFFFF',
+    //   // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}));
+
+
+export default function DialogSelect({session, groupId}) {
   const [open, setOpen] = React.useState(false);
   const [age, setAge] = React.useState('');
-  const [dateRange, setDateRange] = React.useState([null, null]);
+  const [firstDate, setFirstDate] = React.useState([null, null]);
+  const [secondDate, setSecondDate] = React.useState([null, null]);
+  const [minPrice, setMinPrice] = React.useState([null, null]);
+  const [maxPrice, setMaxPrice] = React.useState([null, null]);
   const [lat, setLat] = React.useState(null);
   const [lng, setLng] = React.useState(null);
   const [status, setStatus] = React.useState(null);
   const [city, setCity] = React.useState("Loading Location");
+  const [displayState, setDisplayState] = useState(null);
+  const supabase = useSupabaseClient()
 
-
-  const handleDateRangeChange = (newValue) => {
-    setDateRange(newValue);
-  };
-  const handleChange = (event) => {
-    setAge(Number(event.target.value) || '');
-  };
+  const inputRef = useRef(null);
 
   React.useEffect(() => {
     getLocation();
@@ -97,126 +211,31 @@ export default function DialogSelect() {
   };
 
   const handleClose = (event, reason) => {
+    console.log("CLOSED")
     // if (reason !== 'backdropClick') {
     setOpen(false);
     // }
   };
 
+  //TODO*********************************************************************************
+  //TODO HERE
+  //ADD FORMSTATE TO TRACK UPDATES TO FILTER AS SEEN IN FILTER.JS
+  //THEN USE FORMSTATES TO UPDATE THE SUPABASE WITH NEW USER FILTERS
+  
+  async function updateFilters(filterArray) {
+    if (groupId != null) {
 
-  const LocationInput = styled(InputBase)(({ theme }) => ({
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-    '& .MuiInputBase-input': {
-      color: 'white',
-      borderRadius: 12,
-      position: 'relative',
-      // backgroundColor: theme.palette.background.paper,
-      border: '1px solid #FFFFFF',
-      fontSize: 16,
-      padding: '10px 26px 10px 12px',
-      transition: theme.transitions.create(['border-color', 'box-shadow']),
-      // Use the system font instead of the default Roboto font.
-      fontFamily: [
-        '"Inter"',
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
-      '&:focus': {
-        borderRadius: 12,
-        borderColor: '#FFFFFF',
-        // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      },
-    },
-  }));
+      const { error: updateError } = await supabase
+        .from('groups')
+        .update({filters: filterArray})
+        .eq('group_id', groupId);
 
-  const MinPriceInput = styled(InputBase)(({ theme }) => ({
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-    '& .MuiInputBase-input': {
-      color: 'white',
-      borderRadius: 12,
-      position: 'relative',
-      // backgroundColor: theme.palette.background.paper,
-      border: '1px solid #FFFFFF',
-      fontSize: 16,
-      padding: '10px 26px 10px 12px',
-      transition: theme.transitions.create(['border-color', 'box-shadow']),
-      // Use the system font instead of the default Roboto font.
-      fontFamily: [
-        '"Inter"',
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
-      '&:focus': {
-        borderRadius: 12,
-        borderColor: '#FFFFFF',
-        // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      },
-    },
-  }));
+      if (updateError) throw updateError
 
-  const MaxPriceInput = styled(InputBase)(({ theme }) => ({
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-    '& .MuiInputBase-input': {
-      color: 'white',
-      borderRadius: 12,
-      position: 'relative',
-      // backgroundColor: theme.palette.background.paper,
-      border: '1px solid #FFFFFF',
-      fontSize: 16,
-      padding: '10px 26px 10px 12px',
-      transition: theme.transitions.create(['border-color', 'box-shadow']),
-      // Use the system font instead of the default Roboto font.
-      fontFamily: [
-        '"Inter"',
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
-      '&:focus': {
-        borderRadius: 12,
-        borderColor: '#FFFFFF',
-        // boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      },
-    },
-  }));
-
-
-
-  MinPriceInput.defaultProps = {
-    defaultValue: '$0',
-  };
-
-  MaxPriceInput.defaultProps = {
-    defaultValue: '$0',
-  };
+      alert("FILTERS UPDATED")
+    
+    }
+  }
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -263,9 +282,47 @@ export default function DialogSelect() {
     }
   }
 
-  LocationInput.defaultProps = {
-    defaultValue: city,
+
+
+
+
+  const handleFirstDateChange = (newValue) => {
+    setFirstDate(newValue);
   };
+
+  const handleSecondDateChange = (newValue) => {
+    setSecondDate(newValue);
+  };
+
+
+
+
+
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  }
+
+  const [formState, setFormState] = useState({
+    location: '',
+    minPrice: '',
+    maxPrice: '',
+  });
+
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log("SUBMITTED FILTER")
+    //setDisplayState(formState);
+    const filterUser = [formState.location, formState.minPrice, formState.maxPrice, firstDate, secondDate];
+    console.log(filterUser)
+    updateFilters(filterUser);
+    setOpen(false);
+  }
 
   return (
     <div>
@@ -286,58 +343,84 @@ export default function DialogSelect() {
         >
           <DialogTitle>Filter Concerts</DialogTitle>
           <DialogContent>
-            <Box component="form" sx={{ display: 'grid' }}>
-              <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
-                <InputLabel htmlFor="demo-customized-textbox">Location</InputLabel>
-                <LocationInput id="demo-customized-textbox" />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="demo-customized-textbox">Minimum Price</InputLabel>
-                <MinPriceInput id="demo-customized-textbox" />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="demo-customized-textbox">Maximum Price</InputLabel>
-                <MaxPriceInput id="demo-customized-textbox" />
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="Start Search Date"
-                    value={dateRange}
-                    onChange={handleDateRangeChange}
-                    borderColor="white"
-                    renderInput={(startProps) => (
-                      <>
-                        <input
-                          {...startProps.inputProps}
-                        />
-                      </>
-                    )}
+            <div ref={inputRef}>
+              <Box component="form" sx={{ display: 'grid' }}>
+                <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
+                  <InputLabel htmlFor="location">Location</InputLabel>
+                  <LocationInput
+                  type="text"
+                  inputProps={{ step: 'any' }}
+                  id="location"
+                  name="location"
+                  value={formState.location}
+                  onChange={handleChange}
+                  placeholder='Chicago'
                   />
-                </LocalizationProvider>
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker
-                    label="End Search Date"
-                    value={dateRange}
-                    onChange={handleDateRangeChange}
-                    renderInput={(startProps) => (
-                      <>
-                        <input
-                          {...startProps.inputProps}
-                          placeholder="End Search Date"
-                        />
-                      </>
-                    )}
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <InputLabel htmlFor="minPrice">Minimum Price</InputLabel>
+                  <MinPriceInput
+                  type="text"
+                  id="minPrice"
+                  name="minPrice"
+                  value={formState.minPrice}
+                  onChange={handleChange}
                   />
-                </LocalizationProvider>
-              </FormControl>
-            </Box>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <InputLabel htmlFor="maxPrice">Maximum Price</InputLabel>
+                  <MaxPriceInput
+                  type="text"
+                  id="maxPrice"
+                  name="maxPrice"
+                  value={formState.maxPrice}
+                  onChange={handleChange}
+                
+                  />
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      id="beginning"
+                      label="Start Search Date"
+                      value={firstDate}
+                      onChange={handleFirstDateChange}
+                      borderColor="white"
+                      renderInput={(startProps) => (
+                        <>
+                          <input
+                            {...startProps.inputProps}
+                          />
+                        </>
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      id="end"
+                      label="End Search Date"
+                      value={secondDate}
+                      onChange={handleSecondDateChange}
+                      renderInput={(startProps) => (
+                        <>
+                          <input
+                            {...startProps.inputProps}
+                            placeholder="End Search Date"
+                          />
+                        </>
+                      )}
+                    />
+                  </LocalizationProvider>
+                </FormControl>
+              </Box>
+            </div>
+            
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Ok</Button>
+            <Button onClick={handleSubmit}>Ok</Button>
           </DialogActions>
         </Dialog>
       </ThemeProvider>

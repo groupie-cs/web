@@ -15,9 +15,11 @@ export default function Cycler({ session }) {
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artistData, setArtistData] = useState(false)
     const [recData, setRecData] = useState(false)
+    const [group_id, setGroupId] = useState(null)
     const spotify = new Spotify()
     const ticketmaster = new Ticketmaster()
     const [activeComponent, setActiveComponent] = useState('artistData')
+
 
     useEffect(() => {
         getProfile()
@@ -33,7 +35,7 @@ export default function Cycler({ session }) {
 
             let { data, error, status } = await supabase
                 .from('profiles')
-                .select(`username, website, avatar_url, artists`)
+                .select(`username, website, avatar_url, artists, group_id`)
                 .eq('id', user.id)
                 .single()
 
@@ -45,6 +47,7 @@ export default function Cycler({ session }) {
                 setUsername(data.username)
                 setWebsite(data.website)
                 setAvatarUrl(data.avatar_url)
+                setGroupId(data.group_id)
             }
 
             if (data.artists == null) {
@@ -81,6 +84,22 @@ export default function Cycler({ session }) {
             }
 
             console.log(recs)
+
+            
+           if (group_id != null) {
+
+                let { data, error} = await supabase
+                .from('groups')
+                .select(`concert_recs`)
+                .eq('group_id', group_id)
+                .single()
+
+                if (error) throw error;
+
+                setRecData(data.concert_recs)
+           }
+
+            
 
         } catch (error) {
             alert('Error loading user data!')
@@ -142,7 +161,7 @@ export default function Cycler({ session }) {
             </div>
 
             {activeComponent === 'artistData' && <ArtistData artistData={artistData} session={session}/>}
-            {activeComponent === 'concertData' && <ConcertData recData={recData} />}
+            {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
 
             {activeComponent != 'concertData' && <div>
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>
