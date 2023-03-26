@@ -6,7 +6,7 @@ export class Ticketmaster {
 
     async getConcerts(city, topGenres, startDate = "", endDate = "") {
 
-        const apikey = 'M6Sn1Qxk66pq6wvy81A6AsFQIgGG3sso'
+        const apikey = process.env.TICKETMASTER_API_KEY
         const classificationName = "[" + topGenres.toString() + "]"
         const keyword = ""
         const radius = 100
