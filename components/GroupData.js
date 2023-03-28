@@ -260,6 +260,7 @@ export default function GroupData( {session, groupId, recs} ) {
                 {!isAdmin ? (
                     <button
                         className={styles.button}
+                        role="button"
                         onClick={() => generateInviteLink()}
                         disabled={loading}
                     >
@@ -286,7 +287,10 @@ export default function GroupData( {session, groupId, recs} ) {
                        <div className={styles.groupcard}>
                             <img className={styles.groupimg} src={member.avatar_url} alt={`${member.username}'s avatar`} />
                             <h3 className={styles.cardtext}>{member.username}</h3>
-                            <button onClick={() => removeUser(member.id)}>Remove</button>
+                            <button  
+                                className={styles.button}
+                                role="button" 
+                                onClick={() => removeUser(member.id)}>Remove</button>
                        </div>
                     </div>
                     
