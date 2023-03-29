@@ -2,28 +2,18 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import InputLabel from '@mui/material/InputLabel';
 import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import InputBase from '@mui/material/InputBase';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from "@mui/x-date-pickers";
-import Geocode from "react-geocode";
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 
-
-const filterIcon = <img src={ "https://api-private.atlassian.com/users/97bc37c989b435233b603890fe94c982/avatar" || avatar_url} width="24" height="24" alt="Avatar" />;
-
 const color = "#FFFFFF";
-
 
 const theme = createTheme({
   shape: {
@@ -69,10 +59,12 @@ const theme = createTheme({
   }
 });
 
-export default function UserSelect({ supabase, username, user, av}) {
+export default function UserSelect({ supabase, username, user, avatar_url}) {
   const [open, setOpen] = React.useState(false);
   const [Password, setPassword] = React.useState("");
   const [Email, setEmail] = React.useState("");
+  const filterIcon = <img src={avatar_url || "https://api-private.atlassian.com/users/97bc37c989b435233b603890fe94c982/avatar"} className={styles.groupimg} />;
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -202,10 +194,12 @@ async function updatePassword({ Password }) {
         <Dialog
           hideBackdrop={true}
           open={open}
-          onClose={handleClose}
           PaperProps={{
             style: {
               backgroundColor: '#D99477', //#e5d7cc
+              position: "absolute",
+              right: 0,
+              top: 0
               // boxShadow: 'none',
             },
           }}
@@ -215,18 +209,11 @@ async function updatePassword({ Password }) {
             <Box component="form" sx={{ display: 'grid' }}>
             <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
                 <EmailInput id="demo-customized-textbox"/>
-              </FormControl>
-            <FormControl sx={{ m: 1 }} variant="standard">
                 <Button onClick={() => updateEmail({ Email })}>Update Email</Button>
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
                 <PasswordInput id="demo-customized-textbox"/>
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
                 <Button onClick={() => updatePassword({ Password })}>Update Password</Button>
-              </FormControl>
-              <FormControl sx={{ m: 1 }} variant="standard">
                 <Button onClick={() => supabase.auth.signOut()}>Logout</Button>
+                <Button onClick={handleClose}>Close</Button>
               </FormControl>
             </Box>
           </DialogContent>

@@ -1,14 +1,60 @@
 import { useState, useEffect } from 'react'
 import styles from '@/styles/Home.module.css'
-import Filter from './filter'
 import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
-import Cycler from './Cycler'
 import FormControl from '@mui/material/FormControl';
+import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import ArtistsOption from './ArtistsOption'
 import { Spotify } from '../api/Spotify'
-import ArtistData from './ArtistData'
+import ArtistSongs from './ArtistSongs';
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@emotion/react';
+
+const color = "#FFFFFF";
+
+const theme = createTheme({
+    palette: {
+      mode: 'light',
+      primary: {
+        main: color,
+      },
+      secondary: {
+        main: '#f50057',
+      },
+    },
+    content: {
+        alignItems: "center"
+    },
+    typography: {
+      // fontFamily: '"Inter"',
+      allVariants: {
+        color: "white"
+      },
+    },
+    components: {
+      MuiIconButton: {
+        styleOverrides: {
+          sizeMedium: {
+            color
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            color
+          }
+        }
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color
+          }
+        }
+      }
+    }
+  });
 
 export default function ConcertData({ recData, session, groupId }) {
     const [NewPage, setNewPage] = useState(true)
@@ -45,37 +91,56 @@ export default function ConcertData({ recData, session, groupId }) {
 
     return (
         <div className={styles.homepage}>
+            <ThemeProvider theme={theme}>
             {NewPage == false && <div>
                 <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
-                    <h2>{CurrRec.name.length > 45 ? CurrRec.name.substring(0, 45) + "..." : CurrRec.name}</h2>
+                    <h2>{CurrRec.name.length > 45 ? CurrRec.name.substring(0, 45) + "..." : CurrRec.name}</h2> 
                 </div>
                 <div className={styles.scroller}>
                         <a target="_blank" rel="noopener noreferrer" className={styles.card} key={CurrRec.id}>
-                            <div className={styles.concertcard}>
-                                <img className={styles.concertimg} src={
+                        <FormControl sx={{ m: 1 }} variant="standard">
+                        <div className={styles.paddingLeft}> 
+                            <div>
+                                <img className={styles.concertimgtwo} src={
                                     CurrRec.images.sort((a, b) => b.width - a.width)[0].url
                                 } alt={CurrRec.name} />
                             </div>
-                            <div className={styles.concertDetails}>
-                                <h3>{CurrRec._embedded.venues[0].city.name} - {CurrRec._embedded.venues[0].name}</h3>                                  
-                                {CurrRec.priceRanges && <h3>${CurrRec.priceRanges[0].min} - ${CurrRec.priceRanges[0].max}</h3>}
-                                {CurrRec.info && <h2>{CurrRec.info}</h2>}
-                                {CurrRec.ticketLimit && <h2>{CurrRec.ticketLimit.info}</h2>}
-                            </div>
+                        </div>
+                            <div className={styles.paddingTop}> 
+                            <div className={styles.descriptionInfo}> 
+                            {CurrRec.priceRanges && <h2>${CurrRec.priceRanges[0].min} - ${CurrRec.priceRanges[0].max}</h2>}
+                            <h2>{CurrRec._embedded.venues[0].city.name} - {CurrRec._embedded.venues[0].name}</h2>
+                            <div className={styles.detailButton}> 
                             <a href={CurrRec.url}>
                                 <h2>Buy Ticket</h2>
                             </a>
+                            </div>
                             {Artists != null && <div>
+                                <div className={styles.paddingTop}> 
+                                <div className={styles.detailButton}> 
                                 {Artists.external_urls.spotify != null && <div>
                                     <a href={Artists.external_urls.spotify}>
                                     <h2>Artist Page</h2>
                                 </a>
                                 </div>}
-                                <ArtistsOption artist = {Artists} session = {session}/>
+                                </div>
+                                </div>
+                            </div>}  
+                            </div>
+                            </div>
+                            {CurrRec.info && <div className={styles.paddingTop}> <div className={styles.descriptionInfo}><h3>{CurrRec.info}</h3></div></div>}
+                            {CurrRec.ticketLimit && <div className={styles.paddingTop}> <div className={styles.descriptionInfo}><h3>{CurrRec.ticketLimit.info}</h3></div></div>}
+                            <div className={styles.paddingTop}> 
+                            {Artists != null && <div>
+                                <div className={styles.descriptionInfo}> 
+                                <ArtistSongs artist = {Artists} session = {session}/>
+                                </div>
                             </div>}
-                            <FormControl sx={{ m: 1 }} variant="standard">
-                                <Button onClick={() => setNewPage(true)}>Back</Button>
+                            </div>
+                            <div className={styles.paddingTop}>
+                            <Button onClick={() => setNewPage(true)}>Back</Button>
+                            </div>
                             </FormControl>
                         </a>
                 </div>
@@ -114,6 +179,7 @@ export default function ConcertData({ recData, session, groupId }) {
                 </div>
             </div>
             </div>}
+            </ThemeProvider>
         </div>
     )
 }
