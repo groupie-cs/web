@@ -4,17 +4,43 @@ import Filter from './filter'
 import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
 import Cycler from './Cycler'
-import { useState, useEffect } from 'react'
 import FormControl from '@mui/material/FormControl';
 import Button from '@mui/material/Button';
+import ArtistsOption from './ArtistsOption'
+import { Spotify } from '../api/Spotify'
+import ArtistData from './ArtistData'
 
-export default function ConcertData({ recData }) {
+export default function ConcertData({ recData, session, groupId }) {
     const [NewPage, setNewPage] = useState(true)
     const [CurrRec, setRec] = useState(null)
+    const [Artists, setArtists] = useState(null)
+    const spotify = new Spotify()
+
+    async function getArtists(name) {
+        try {
+            const artistData = await spotify.getArtist(session, name)
+            if (artistData != null) {
+                if (artistData.artists.items != null) {
+                    setArtists(artistData.artists.items[0])
+                }
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const handleCardClick = (currRec) => {
         setRec(currRec)
         setNewPage(false)
+        console.log(currRec)
+        if (currRec._embedded != null) {
+            if (currRec._embedded.attractions != null) {
+                if (currRec._embedded.attractions[0].name != null) {
+                    getArtists(currRec._embedded.attractions[0].name)
+                }
+            }
+        }
       };
 
     return (
@@ -40,6 +66,14 @@ export default function ConcertData({ recData }) {
                             <a href={CurrRec.url}>
                                 <h2>Buy Ticket</h2>
                             </a>
+                            {Artists != null && <div>
+                                {Artists.external_urls.spotify != null && <div>
+                                    <a href={Artists.external_urls.spotify}>
+                                    <h2>Artist Page</h2>
+                                </a>
+                                </div>}
+                                <ArtistsOption artist = {Artists} session = {session}/>
+                            </div>}
                             <FormControl sx={{ m: 1 }} variant="standard">
                                 <Button onClick={() => setNewPage(true)}>Back</Button>
                             </FormControl>
@@ -50,26 +84,7 @@ export default function ConcertData({ recData }) {
 
             {NewPage == true && <div>
                 <div className={styles.group}>
-                <h2>Group Members</h2>
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
-
-                <div className={styles.groupcard}>
-                    <img className={styles.groupimg} src='https://0.gravatar.com/avatar/f69c5894d3082052322b3126ba59389f?s=400&d=mm' />
-                    <h3 className={styles.cardtext}>Kunwar Sahni</h3>
-                </div>
+                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
             </div>
             </div>}
 

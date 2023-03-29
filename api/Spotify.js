@@ -95,4 +95,25 @@ export class Spotify {
 
         return topSong
     }
+
+    async getArtist(session, artistName) {
+        const { provider_token } = session
+        const url = "https://api.spotify.com/v1/search?query=" + artistName + "&type=artist&limit=1"
+
+        const response = await (
+            await fetch( url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${provider_token}`
+                },
+            })
+        ).json()
+
+        if (response.artists.items[0] != null) {
+            const topSongs = await this.getTopSong(session, response.artists.items[0].id)
+            response.artists.items[0]["topSongs"] = topSongs
+        }
+      
+        return response;
+      }
 }
