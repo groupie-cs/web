@@ -11,6 +11,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
     const [group_id, setGroupId] = useState(null)
     const [groupData, setGroupData] = useState(null)
+    const [hasGroupId, setHasGroupId] = useState(null)
     const [groupDataIsHere, setGroupDataIsHere] = useState(null)
 
     const [inviteLink, setInviteLink] = useState('')
@@ -19,18 +20,26 @@ export default function GroupData( {session, groupId, recs} ) {
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
         setGroupId(groupId)
-        console.log("GroupID " + groupId)
-        console.log("Session " + session)
-        console.log(groupId)
+        if (groupId != null) {
+            setHasGroupId(true)
+            console.log("HAS GROUP")
+            console.log("GroupID " + groupId)
+
+        }
+        
+       
+      
+     
         if (inviteId) {
             console.log("Adding to Group")
             setIsAdmin(false)
             addToGroup(inviteId)
         } else {
             
-            console.log("You are a group owner")
-            console.log(group_id)
-            setIsAdmin(true)
+            if (groupId == null) {
+                console.log("You are a group owner")
+                setIsAdmin(true)
+            }
 
              async function getGroup(groupId) {
                 try {
@@ -163,6 +172,7 @@ export default function GroupData( {session, groupId, recs} ) {
             if (error) throw error
 
             setGroupId(inviteId)
+            setHasGroupId(true)
 
             const { newError } = await supabase
             .from('groups')
@@ -256,8 +266,10 @@ export default function GroupData( {session, groupId, recs} ) {
 
         
         <div className={styles.group}>
-             <div>
+             <h2>Group Members</h2>
+        
                 {isAdmin ? (
+                    <div className={styles.groupcard}>
                     <button
                         className={styles.button}
                         role="button"
@@ -266,15 +278,16 @@ export default function GroupData( {session, groupId, recs} ) {
                     >
                         {loading ? 'Loading ...' : 'Generate Invite Link'}
                     </button>
+                     </div>
                 ) : null}
                 {inviteLink && (
                     <p>
                         Share this link with your friends: <a href={`http://localhost:3000/`}>{`http://localhost:3000/?inviteId=${inviteLink}`}</a>
                     </p>
                 )}
-            </div>
+           
 
-            <h2>Group Members</h2>
+           
            
           
 
@@ -287,10 +300,12 @@ export default function GroupData( {session, groupId, recs} ) {
                        <div className={styles.groupcard}>
                             <img className={styles.groupimg} src={member.avatar_url} alt={`${member.username}'s avatar`} />
                             <h3 className={styles.cardtext}>{member.username}</h3>
-                            <button  
+                            {isAdmin ? (
+                                <button  
                                 className={styles.button}
                                 role="button" 
                                 onClick={() => removeUser(member.id)}>Remove</button>
+                            ) : null}
                        </div>
                     </div>
                     
