@@ -257,7 +257,7 @@ export default function GroupData( {session, groupId, recs} ) {
         
         <div className={styles.group}>
              <div>
-                {!isAdmin ? (
+                {isAdmin ? (
                     <button
                         className={styles.button}
                         role="button"
