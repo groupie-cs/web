@@ -13,7 +13,7 @@ export default function GroupData( {session, groupId, recs} ) {
     const [groupData, setGroupData] = useState(null)
     const [hasGroupId, setHasGroupId] = useState(null)
     const [groupDataIsHere, setGroupDataIsHere] = useState(null)
-
+    const [groupValues, setGroupValues] = useState(null)
     const [inviteLink, setInviteLink] = useState('')
     const [isAdmin, setIsAdmin] = useState(null)
 
@@ -33,10 +33,12 @@ export default function GroupData( {session, groupId, recs} ) {
 
       
      
-        if (inviteId) {
+        if (inviteId && !groupValues) {
             console.log("Adding to Group")
             setIsAdmin(false)
             addToGroup(inviteId)
+            setGroupValues(true)
+        } else if (groupValues) {
         } else {
             async function getGroup(groupId) {
                 try {
@@ -186,6 +188,18 @@ export default function GroupData( {session, groupId, recs} ) {
             setHasGroupId(true)
 
             console.log("THIS IS THIS INVITE CODE" + userUpdate.group_id)
+
+            const { data: users } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('group_id', userUpdate.group_id)
+
+                        if(error) console.log(error)
+                        else {
+                            setGroupData(users)
+                            setGroupDataIsHere(true)
+                            console.log(groupDataIsHere)
+                        }
 
 
 
