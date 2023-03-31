@@ -8,6 +8,7 @@ const spotify = new Spotify()
 
 export default function ArtistData({ artistData, session }) {
     const [results, setResults] = useState();
+    console.log(artistData)
 
     return (
         <div className={styles.center}>
@@ -24,7 +25,6 @@ export default function ArtistData({ artistData, session }) {
                             </div>
                         )
                     })}
-                    
                 </div>
                 <h1>And get your friend's tastes next</h1>
             </div>

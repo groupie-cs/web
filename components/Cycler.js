@@ -5,6 +5,7 @@ import { Spotify } from '../api/Spotify'
 import { Ticketmaster } from '../api/Ticketmaster'
 import ArtistData from './ArtistData'
 import ConcertData from './ConcertData'
+import UserSelect from './UserSelect'
 
 export default function Cycler({ session }) {
     const supabase = useSupabaseClient()
@@ -154,9 +155,7 @@ export default function Cycler({ session }) {
         <div className={styles.main}>
             <div className={styles.right}>
                 <div className={styles.description}>
-                    <p onClick={() => supabase.auth.signOut()}>
-                        Sign Out
-                    </p>
+                    <UserSelect supabase={supabase} username={username} user ={user} avatar_url={avatar_url}></UserSelect>
                 </div>
             </div>
 
@@ -167,7 +166,6 @@ export default function Cycler({ session }) {
                 <button onClick={handlePrevClick}><i className="arrow left"></i></button>
                 <button onClick={handleNextClick}><i className="arrow right"></i></button>
             </div>}
-
         </div>
     )
 }
