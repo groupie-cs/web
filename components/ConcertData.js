@@ -112,7 +112,7 @@ export default function ConcertData({ recData, session, groupId }) {
                             {CurrRec.priceRanges && <h2>${CurrRec.priceRanges[0].min} - ${CurrRec.priceRanges[0].max}</h2>}
                             <h2>{CurrRec._embedded.venues[0].city.name} - {CurrRec._embedded.venues[0].name}</h2>
                             <div className={styles.detailButton}> 
-                            <a href={CurrRec.url}>
+                            <a target="_blank"  href={CurrRec.url}>
                                 <h2>Buy Ticket</h2>
                             </a>
                             </div>
@@ -120,7 +120,7 @@ export default function ConcertData({ recData, session, groupId }) {
                                 <div className={styles.paddingTop}> 
                                 <div className={styles.detailButton}> 
                                 {Artists.external_urls.spotify != null && <div>
-                                    <a href={Artists.external_urls.spotify}>
+                                    <a target="_blank" href={Artists.external_urls.spotify}>
                                     <h2>Artist Page</h2>
                                 </a>
                                 </div>}
