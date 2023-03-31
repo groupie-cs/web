@@ -248,7 +248,7 @@ export default function DialogSelect({session, groupId}) {
         setLng(position.coords.longitude);
         console.log("Location Retrived!");
         console.log(position);
-        Geocode.setApiKey("AIzaSyCwhvOHS5XieZ18-qxv0omSFqdg2uLSOQU");
+        Geocode.setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
         Geocode.fromLatLng(position.coords.latitude, position.coords.longitude).then(
           (response) => {
             const address = response.results[0].formatted_address;
@@ -293,11 +293,6 @@ export default function DialogSelect({session, groupId}) {
   const handleSecondDateChange = (newValue) => {
     setSecondDate(newValue);
   };
-
-
-
-
-
 
   const handleChange = (event) => {
     const { name, value } = event.target;
