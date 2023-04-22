@@ -5,6 +5,14 @@ import ArtistsOption from './ArtistsOption'
 
 const spotify = new Spotify()
 
+function removeArtist(artistid, artistData) {
+    for (let i = 0; i < artistData.items.length; i++) {
+        if (artistData.items[i].id == artistid) {
+            artistData.items.splice(i, 1)
+        }
+    }
+}
+
 
 export default function ArtistData({ artistData, session }) {
     const [results, setResults] = useState();
@@ -17,7 +25,7 @@ export default function ArtistData({ artistData, session }) {
                 <div className={styles.hs}>
                     {artistData && artistData.items.map((artist) => {
                         return (
-                            <div className={styles.card} key={artist.id}>
+                            <div className={styles.card} key={artist.id} onClick={removeArtist(artist.id, artistData)} >
                                 <ArtistsOption artist = {artist} session = {session}/>
                                 <h2>{artist.name}</h2>
                                 {/* <h2>Top Song: {artist.topSongs.tracks[0].name}</h2> */}
