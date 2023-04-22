@@ -135,7 +135,7 @@
 .group {
   display: grid;
   align-content: start;
-
+  max-width: 250px;
   background: #e8d6cb;
   border-radius: 20px;
   padding: 15px;
