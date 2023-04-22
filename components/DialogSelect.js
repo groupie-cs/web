@@ -64,27 +64,59 @@ const theme = createTheme({
         }
       }
     },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+         
+        }
+      }
+    },
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          color
+
+          color,
+        
+          
         }
        
       }
     },
+  
     MuiInputBase: {
       styleOverrides: {
         root: {
-          color
+          color,
         }
       }
     }
   }
 });
 
+const CustomInputLabel = styled(InputLabel)({
+  padding: '18px',
+  // copy all original styles from MuiInputLabel
+  color: (props) => props.theme.palette.text.primary,
+  fontSize: (props) => props.theme.typography.pxToRem(16),
+  fontWeight: (props) => props.theme.typography.fontWeightBold,
+  lineHeight: 1,
+  '&.Mui-focused': {
+    color: (props) => props.theme.palette.text.primary,
+  },
+  '&.Mui-disabled': {
+    color: (props) => props.theme.palette.text.disabled,
+  },
+});
+
 const LocationInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(3),
+  },
+  '& -MuiInputLabel-root': {
+    left: '20px',
+    top: '30px',
+    position:'relative',
+    
   },
   '& .MuiInputBase-input': {
     color: 'white',
@@ -233,20 +265,14 @@ export default function DialogSelect({session, groupId}) {
    
     filterSettings[0] = city;
 
-    console.log("THIS IS LOCATION" + filterSettings.location);
+    console.log("THIS IS LOCATION" + filterSettings[0]);
 
     if (users[0].filters != null) {
       console.log("FILTERS NOT NULL");
       console.log(users[0].filters);
       setFilterSettings(users[0].filters);
-      //console.log(filterSettings);
-     // console.log(filterSettings[0]);
-    } else {
-      // filterSettings[1] = '$0';
-      // filterSettings[2] = '$200';
-      // filterSettings[3] = '';
-      // filterSettings[4] = '';
-    }
+
+    } 
    
 
     console.log(filterSettings[0]);
@@ -405,7 +431,7 @@ export default function DialogSelect({session, groupId}) {
             <div ref={inputRef}>
               <Box component="form" sx={{ display: 'grid' }}>
                 <FormControl sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="location">Location</InputLabel>
+                  <CustomInputLabel htmlFor="location">Location</CustomInputLabel>
                   <LocationInput
                   type="text"
                   id="location"
@@ -420,7 +446,7 @@ export default function DialogSelect({session, groupId}) {
                   />
                 </FormControl>
                 <FormControl sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="minPrice">Minimum Price</InputLabel>
+                  <CustomInputLabel htmlFor="minPrice">Minimum Price</CustomInputLabel>
                   <MinPriceInput
                   type="text"
                   id="minPrice"
@@ -434,7 +460,7 @@ export default function DialogSelect({session, groupId}) {
                   />
                 </FormControl>
                 <FormControl sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="maxPrice">Maximum Price</InputLabel>
+                  <CustomInputLabel htmlFor="maxPrice">Maximum Price</CustomInputLabel>
                   <MaxPriceInput
                   type="text"
                   id="maxPrice"
