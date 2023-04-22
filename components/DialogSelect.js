@@ -220,7 +220,7 @@ const MaxPriceInput = styled(InputBase)(({ theme }) => ({
 }));
 
 
-export default function DialogSelect({session, groupId}) {
+export default function DialogSelect({session, groupId, onSubmit}) {
   const [open, setOpen] = React.useState(false);
   const [age, setAge] = React.useState('');
   const [lat, setLat] = React.useState(null);
@@ -286,7 +286,10 @@ export default function DialogSelect({session, groupId}) {
     // }
   };
 
-
+// TODO ***********************
+// HAVE FILTER MAKE CALLBACK INTO CONCERT DATA AND THEN INTO CYCLER. THIS CALLBACK SHOULD PASS THROUGH THE FILTER DATA ALL THE WAY INTO 
+// GET PROFILES IN CYCLER AND THEN IN THE GETPROFILE(), have the function RECALL THE TICKETMASTER API WITH UPDATED FILTERS
+// OR, PASS THORUGH GENRES INTO CONCERTDATA, AND THEN REMAKE THE TICKETMASTERAPI FUNCTION THERE IN ORDER TO JUST HAVE IT REFRESH ONLY ITSELF, MAY BE EASIER
   
   async function updateFilters() {
     console.log("FILTER SETTINGS HERE");
@@ -302,6 +305,8 @@ export default function DialogSelect({session, groupId}) {
 
       if (error) throw error
 
+      
+
 
     if (groupId != null) {
 
@@ -314,6 +319,8 @@ export default function DialogSelect({session, groupId}) {
       if (updateError) throw updateError
 
       alert("FILTERS UPDATED")
+
+      onSubmit(filters);
     
     }
   }
