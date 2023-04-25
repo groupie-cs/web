@@ -336,7 +336,7 @@ export default function GroupData( {session, groupId, recs} ) {
                 {inviteLink && (
                     <p>
                         Share this link with your friends: <a href={`http://localhost:3000/`}>{`http://localhost:3000/?inviteId=${inviteLink}`}</a>
-                        Share this link with your friends: <a href={'https://web-seven-pi.vercel.app/'}>{'https://web-seven-pi.vercel.app/?inviteId=${inviteLink}'}</a>
+                        Share this link with your friends: <a href={`https://web-seven-pi.vercel.app/`}>{`https://web-seven-pi.vercel.app/?inviteId=${inviteLink}`}</a>
                     </p>
                 )}
         

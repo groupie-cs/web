@@ -9,6 +9,7 @@ import { Spotify } from '../api/Spotify'
 import ArtistSongs from './ArtistSongs';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
+import { Ticketmaster } from '../api/Ticketmaster'
 
 const color = "#FFFFFF";
 
@@ -56,25 +57,46 @@ const theme = createTheme({
     }
   });
 
-export default function ConcertData({ recData, session, groupId }) {
+export default function ConcertData({ recData, session, groupId, genres}) {
     const [NewPage, setNewPage] = useState(true)
     const [CurrRec, setRec] = useState(null)
     const [Artists, setArtists] = useState(null)
     const spotify = new Spotify()
 
-    const [filters, setFilters] = useState({});
-    const [inputRecs, setInputRecs] = useState([]);
+    const [filters, setFilters] = useState(null);
+    const [inputRecs, setInputRecs] = useState(null);
+    const [firstSet, setFirstSet] = useState(false);
 
-    // if (recData != null) {
-    //     setInputRecs(recData);
-    // }
+    const ticketmaster = new Ticketmaster()
 
-    // const handleFilterSubmit = (newFilters) => {
-    //     setFilters(newFilters);
-    //   };
+    useEffect(() => {
+        if (inputRecs == null && firstSet == false) {
+            setInputRecs(recData)
+            setFirstSet(true)
+        }
+        if (filters != null) {
+            doTicketmaster()
+            setFilters(null);
+        }
+    });
+
+    async function doTicketmaster() {
+        console.log("FILTERS HERE" + filters.length)
+        console.log(filters[0]);
+        console.log(filters[3])
+        console.log(filters[4])
+        //const recs = await ticketmaster.getConcerts(filters[0], genres);
+        const recs = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
+        setInputRecs(recs);
+        console.log("DONE")
+    }
+
+    const handleFilterSubmit = (newFilters) => {
+        setFilters(newFilters);
+      };
 
     // IN RETURN
-    // <DialogSelect groupId={groupId} onSubmit={handleFilterSubmit}></DialogSelect>
+    
 
     async function getArtists(name) {
         try {
@@ -171,10 +193,10 @@ export default function ConcertData({ recData, session, groupId }) {
             <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
                     <h2>Concerts</h2>
-                    <DialogSelect groupId={groupId}></DialogSelect>
+                    <DialogSelect groupId={groupId} onSubmit={handleFilterSubmit}></DialogSelect>
                 </div>
                 <div className={styles.scroller}>
-                {recData && recData._embedded.events.map((rec) => {
+                {inputRecs && inputRecs._embedded.events.map((rec) => {
                     return (
                         <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id}>
                             <div className={styles.concertcard} onClick={() => handleCardClick(rec)}>
