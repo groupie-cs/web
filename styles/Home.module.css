@@ -130,6 +130,13 @@
 .detailButton {
   background-color: #ebdbd1;
   border-radius: var(--border-radius);
+  padding: .3rem;
+  width: 9rem;
+}
+
+.createButton {
+  background-color: #ebdbd1;
+  border-radius: var(--border-radius);
   width: 14rem;
   height: 3rem;
   font-size: 1.7rem;
