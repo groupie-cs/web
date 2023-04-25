@@ -3,35 +3,36 @@ import styles from '@/styles/Home.module.css'
 import Filter from './filter'
 import GroupData from './GroupData'
 import DialogSelect from './DialogSelect'
-import { useState } from 'react';
-
 
 export default function ConcertData({ recData, session, groupId }) {
     const [filters, setFilters] = useState({});
     const [inputRecs, setInputRecs] = useState([]);
 
-    if (recData != null) {
-        setInputRecs(recData);
-    }
+    // if (recData != null) {
+    //     setInputRecs(recData);
+    // }
 
-    const handleFilterSubmit = (newFilters) => {
-        setFilters(newFilters);
-      };
+    // const handleFilterSubmit = (newFilters) => {
+    //     setFilters(newFilters);
+    //   };
+
+    // IN RETURN
+    // <DialogSelect groupId={groupId} onSubmit={handleFilterSubmit}></DialogSelect>
 
     return (
         <div className={styles.homepage}>
             <div className={styles.group}>
-                <GroupData session={session} groupId={groupId}> recs={inputRecs}</GroupData>
+                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
             </div>
 
 
             <div className={styles.concertrecomendations}>
                 <div className={styles.headertitle}>
                     <h2>Concerts</h2>
-                    <DialogSelect groupId={groupId} onSubmit={handleFilterSubmit}></DialogSelect>
+                    <DialogSelect groupId={groupId}></DialogSelect>
                 </div>
                 <div className={styles.scroller}>
-                {inputRecs && inputRecs._embedded.events.map((rec) => {
+                {recData && recData._embedded.events.map((rec) => {
                     return (
                         <a target="_blank" rel="noopener noreferrer" className={styles.card} key={rec.id} href={rec.url}>
                             <div className={styles.concertcard}>
