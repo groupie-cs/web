@@ -130,8 +130,11 @@
 .detailButton {
   background-color: #ebdbd1;
   border-radius: var(--border-radius);
-  padding: .3rem;
-  width: 9rem;
+  width: 14rem;
+  height: 3rem;
+  font-size: 1.7rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
 }
 
 

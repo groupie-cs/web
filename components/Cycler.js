@@ -6,6 +6,7 @@ import { Ticketmaster } from '../api/Ticketmaster'
 import ArtistData from './ArtistData'
 import ConcertData from './ConcertData'
 import UserSelect from './UserSelect'
+import { countGenres } from './utils';
 
 export default function Cycler({ session }) {
     const supabase = useSupabaseClient()
@@ -163,8 +164,7 @@ export default function Cycler({ session }) {
             {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
 
             {activeComponent != 'concertData' && <div>
-                <button onClick={handlePrevClick}><i className="arrow left"></i></button>
-                <button onClick={handleNextClick}><i className="arrow right"></i></button>
+                <button onClick={handleNextClick} className={styles.detailButton}>Create Group</button>
             </div>}
         </div>
     )
