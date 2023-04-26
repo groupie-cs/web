@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import styles from '@/styles/Home.module.css'
-import GroupData from './GroupData'
-import DialogSelect from './DialogSelect'
+import { useState, useEffect } from 'react';
+import styles from '@/styles/Home.module.css';
+import GroupData from './GroupData';
+import DialogSelect from './DialogSelect';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -9,7 +9,9 @@ import { Spotify } from '../api/Spotify'
 import ArtistSongs from './ArtistSongs';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { Ticketmaster } from '../api/Ticketmaster'
+import { Ticketmaster } from '../api/Ticketmaster';
+import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
+import { countGenres } from "./utils.js";
 
 const color = "#FFFFFF";
 
@@ -58,6 +60,8 @@ const theme = createTheme({
   });
 
 export default function ConcertData({ recData, session, groupId, genres}) {
+    const supabase = useSupabaseClient()
+    const [loading, setLoading] = useState(true)
     const [NewPage, setNewPage] = useState(true)
     const [CurrRec, setRec] = useState(null)
     const [Artists, setArtists] = useState(null)
@@ -79,6 +83,31 @@ export default function ConcertData({ recData, session, groupId, genres}) {
             setFilters(null);
         }
     });
+
+    async function updateRecData() {
+      try {
+        setLoading(true)
+
+        if (groupId != null) {
+            let { data, error } = await supabase
+                .from('groups')
+                .select('*')
+                .eq('group_id', groupId)
+
+            if (error) throw error;
+
+            let group_genre_list = data[0].group_genre
+
+            let genre_table = countGenres(group_genre_list)
+        }
+
+      } catch (error) {
+          alert('Error Getting Group!')
+        console.log(error)
+      } finally {
+         setLoading(false)
+      }
+    }
 
     async function doTicketmaster() {
         console.log("FILTERS HERE" + filters.length)

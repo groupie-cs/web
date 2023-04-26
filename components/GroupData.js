@@ -30,7 +30,6 @@ export default function GroupData( {session, groupId, recs} ) {
         }
      
         if (inviteId && !groupValues) {
-            console.log("Adding to Group")
             setIsAdmin(false)
             addToGroup(inviteId)
             setGroupValues(true)
@@ -41,11 +40,12 @@ export default function GroupData( {session, groupId, recs} ) {
                     setLoading(true)
                     if (groupId) {
                         const { data: users, error } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('group_id', groupId)
+                            .from('profiles')
+                            .select('*')
+                            .eq('group_id', groupId)
 
                         if(error) console.log(error)
+        
                         else {
                             setGroupData(users)
                             setGroupDataIsHere(true)
@@ -66,6 +66,29 @@ export default function GroupData( {session, groupId, recs} ) {
                         }
 
 
+                    }
+
+                    if (groupId != null) {
+                        let { data, error } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('group_id', groupId)
+
+                        if (error) throw error;
+
+                        if (data) {
+
+                            let profileGenres = data[0].genre_list;
+
+                            let { error: updateError } = await supabase
+                                .from('groups')
+                                .update({
+                                    group_genre: profileGenres
+                                })
+                                .eq('group_id', groupId);
+                    
+                            if (updateError) throw updateError;
+                        }
                     }
 
                 } catch (error) {
@@ -177,9 +200,10 @@ export default function GroupData( {session, groupId, recs} ) {
 
 
     async function addToGroup(inviteId) {
+        alert("in add to grouo")
         try {
             setLoading(true)
-            
+            alert("in try")
             const { data, firstError } = await supabase
                 .from('groups')
                 .select('admin_id')
@@ -196,13 +220,12 @@ export default function GroupData( {session, groupId, recs} ) {
                 is_group_admin: false,
                 updated_by: data.admin_id
             }
-  
+
             let { error } = await supabase.from('profiles').upsert(userUpdate)
             if (error) throw error
 
             setGroupId(userUpdate.group_id)
             setHasGroupId(true)
-
             console.log("THIS IS THIS INVITE CODE" + userUpdate.group_id)
 
             const { data: users } = await supabase
@@ -249,6 +272,42 @@ export default function GroupData( {session, groupId, recs} ) {
                     group_id: userUpdate.group_id,
                     updated_at: new Date().toISOString(),
                     members: groups
+                }
+                alert("outside this bicth")
+                if (groupId != null) {
+                    let { data, error } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('group_id', groupId)
+                
+                    if (error) throw error;
+
+                    alert("in the middle in this bicth")
+                
+                    if (data) {
+                        let profileGenres = data[0].genre_list;
+                        alert("otherside of this bitch")
+
+                        let { data: groupList, error: groupError } = await supabase
+                            .from('groups')
+                            .select('*')
+                            .eq('group_id', groupId)
+                
+                        if (groupError) throw groupError;
+
+                        let updated_genre_list = groupList[0].group_genre.concat(profileGenres);
+                        console.log(updated_genre_list);
+                        alert("its in bicth")
+                
+                        let { error: updateError } = await supabase
+                            .from('groups')
+                            .update({
+                                group_genre: updated_genre_list
+                            })
+                            .eq('group_id', groupId);
+                
+                        if (updateError) throw updateError;
+                    }
                 }
 
                 // const { error: groupUpdate } = await supabase

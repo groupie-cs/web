@@ -24,26 +24,20 @@ export class Spotify {
         return topArtists
     }
 
-    getTopGenres(topArtists, num = 5) {
+    getTopGenres(topArtists) {
         let genres = []
+        const num = topArtists.limit
+        const genreLimitPerArtist = 3
+        
         for (let i = 0; i < num; i++) {
-            if (i > topArtists.limit) {
-                console.log("Your num is larger than total artists to getTopGenres")
-                break
-            }
-
-            // if (topArtists.items[i].genres[0] != undefined && topArtists.items[i].genres[0] != "") {
-            console.log(topArtists.items[i].genres[0])
-            if (topArtists.items[i].genres[0] != undefined) {
-                genres[i] = topArtists.items[i].genres[0]
-            } else {
-                genres[i] = ""
-            }
-            // }
-
+            topArtists.items[i].genres.forEach(genre => {
+                if ((genre != undefined) && (genreLimitPerArtist-1 < i)) {
+                    genres.push(genre)
+                }
+            });
         }
         genres.filter(n => n)
-
+        
         return genres
     }
 
