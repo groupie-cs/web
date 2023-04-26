@@ -9,7 +9,7 @@ import FormControl from '@mui/material/FormControl';
 import InputBase from '@mui/material/InputBase';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { Inter } from "next/font/google"
+import { Inter } from "@next/font/google"
 import styles from '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 
