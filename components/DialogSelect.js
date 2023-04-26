@@ -337,9 +337,8 @@ export default function DialogSelect({session, groupId, onSubmit}) {
           filters: filters});
 
       if (updateError) throw updateError
-
-      alert("FILTERS UPDATED")
-      //TODO
+        
+      console.log("FILTERS UPDATED")
       onSubmit(filters);
     
     }
