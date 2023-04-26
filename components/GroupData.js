@@ -16,6 +16,8 @@ export default function GroupData( {session, groupId, recs} ) {
     const [groupValues, setGroupValues] = useState(null)
     const [inviteLink, setInviteLink] = useState('')
     const [isAdmin, setIsAdmin] = useState(null)
+    const [copySuccess, setCopySuccess] = useState('');
+    const [showButton, setShowButton] = useState(true);
 
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
@@ -26,12 +28,6 @@ export default function GroupData( {session, groupId, recs} ) {
             console.log("GroupID " + groupId)
 
         }
-        
-        
-
-
-
-      
      
         if (inviteId && !groupValues) {
             console.log("Adding to Group")
@@ -55,10 +51,25 @@ export default function GroupData( {session, groupId, recs} ) {
                             setGroupDataIsHere(true)
                             console.log(groupDataIsHere)
                         }
+
+                        const { data: userData, error: currentError } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', user.id)
+
+                        if (currentError) console.log("THERE IS AN ERROR HERE")
+
+                        const currentUser = userData[0]
+                        if (currentUser.is_group_admin == true) {
+                            console.log("YOU ARE TEH ADMIN")
+                            setIsAdmin(true)
+                        }
+
+
                     }
 
                 } catch (error) {
-                    alert('Error Getting Group!')
+                   
                     console.log(error)
                 } finally {
                     setLoading(false)
@@ -77,6 +88,11 @@ export default function GroupData( {session, groupId, recs} ) {
         }
     }, [group_id, session])
 
+
+    function handleCopyLink() {
+        navigator.clipboard.writeText(inviteLink);
+        setCopySuccess('Copied to Clipboard');
+    }
 
     async function removeUser(userId) {
         try {
@@ -149,10 +165,10 @@ export default function GroupData( {session, groupId, recs} ) {
             }
             
 
-            alert("User Removed!")
+           // alert("User Removed!")
       
           } catch (error) {
-            alert('Error updating the data!')
+           // alert('Error updating the data!')
             console.log(error)
           } finally {
             setLoading(false)
@@ -171,7 +187,7 @@ export default function GroupData( {session, groupId, recs} ) {
                 .single();
             if (firstError) throw firstError
 
-
+        
 
             const userUpdate = {
                 id: user.id,
@@ -267,7 +283,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
           //  alert('Profile updated!')
         } catch (error) {
-            alert('Error updating the data!')
+            //alert('Error updating the data!')
             console.log(error)
         } finally {
             setLoading(false)
@@ -288,6 +304,8 @@ export default function GroupData( {session, groupId, recs} ) {
                 members: [user.id]
             }
 
+            setShowButton(false);
+
             let { error } = await supabase.from('groups').upsert(newGroup)
             if (error) throw error
       
@@ -301,10 +319,10 @@ export default function GroupData( {session, groupId, recs} ) {
             let { newError } = await supabase.from('profiles').upsert(userUpdate)
             if (newError) throw newError
 
-            alert('Profile updated!')
+            //alert('Profile updated!')
       
           // Set the state to the new invite link and redirect the user
-            setInviteLink(uuid);
+            setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
       
           } catch (error) {
             alert('Error updating the data!')
@@ -321,7 +339,7 @@ export default function GroupData( {session, groupId, recs} ) {
         <div className={styles.group}>
              <h2>Group Members</h2>
         
-                {isAdmin ? (
+                {showButton && !groupDataIsHere && isAdmin ? (
                     <div className={styles.groupcard}>
                     <button
                         className={styles.button}
@@ -329,15 +347,21 @@ export default function GroupData( {session, groupId, recs} ) {
                         onClick={() => generateInviteLink()}
                         disabled={loading}
                     >
-                        {loading ? 'Loading ...' : 'Generate Invite Link'}
+                        {loading ? 'Loading ...' : 'Generate your Group'}
                     </button>
                      </div>
                 ) : null}
                 {inviteLink && (
-                    <p>
-                        Share this link with your friends: <a href={`http://localhost:3000/`}>{`http://localhost:3000/?inviteId=${inviteLink}`}</a>
-                        Share this link with your friends: <a href={`https://web-seven-pi.vercel.app/`}>{`https://web-seven-pi.vercel.app/?inviteId=${inviteLink}`}</a>
-                    </p>
+                    <div className={styles.groupcard}>
+                        <div>
+                            <button 
+                                className={styles.button}
+                                role="button"
+                                onClick={handleCopyLink}>
+                                {copySuccess ? copySuccess : 'Copy Link for Friends'}
+                            </button>
+                        </div>
+                    </div>
                 )}
         
            
