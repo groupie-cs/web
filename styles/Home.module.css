@@ -134,6 +134,16 @@
   width: 9rem;
 }
 
+.createButton {
+  background-color: #ebdbd1;
+  border-radius: var(--border-radius);
+  width: 14rem;
+  height: 3rem;
+  font-size: 1.7rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
 
 .headertitle {
   display: flex;
