@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { Inter } from "@next/font/google"
+import { Inter } from "next/font/google"
 import styles from '@/styles/Home.module.css'
 
 import SpotifyPlayer from 'react-spotify-web-playback';

@@ -15,7 +15,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import Geocode from "react-geocode";
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { Inter } from "@next/font/google"
+import { Inter } from "next/font/google"
 import '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
