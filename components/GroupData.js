@@ -50,29 +50,6 @@ export default function GroupData( {session, groupId, recs} ) {
                         }
                     }
 
-                    if (groupId != null) {
-                        let { data, error } = await supabase
-                            .from('profiles')
-                            .select('*')
-                            .eq('group_id', groupId)
-
-                        if (error) throw error;
-
-                        if (data) {
-
-                            let profileGenres = data[0].genre_list;
-
-                            let { error: updateError } = await supabase
-                                .from('groups')
-                                .update({
-                                    group_genre: profileGenres
-                                })
-                                .eq('group_id', groupId);
-                    
-                            if (updateError) throw updateError;
-                        }
-                    }
-
                 } catch (error) {
                     alert('Error Getting Group!')
                     console.log(error)
@@ -248,7 +225,7 @@ export default function GroupData( {session, groupId, recs} ) {
                     updated_at: new Date().toISOString(),
                     members: groups
                 }
-                alert("outside this bicth")
+                console.log("outside this bicth")
                 if (groupId != null) {
                     let { data, error } = await supabase
                         .from('profiles')
@@ -257,22 +234,22 @@ export default function GroupData( {session, groupId, recs} ) {
                 
                     if (error) throw error;
 
-                    alert("in the middle in this bicth")
+                    console.log("in the middle in this bicth")
                 
                     if (data) {
                         let profileGenres = data[0].genre_list;
-                        alert("otherside of this bitch")
+                        console.log("otherside of this bitch")
 
                         let { data: groupList, error: groupError } = await supabase
                             .from('groups')
                             .select('*')
                             .eq('group_id', groupId)
-                
-                        if (groupError) throw groupError;
+
+                        if (groupError) console.log(groupError);
 
                         let updated_genre_list = groupList[0].group_genre.concat(profileGenres);
                         console.log(updated_genre_list);
-                        alert("its in bicth")
+                        console.log("its in bicth")
                 
                         let { error: updateError } = await supabase
                             .from('groups')
@@ -330,12 +307,28 @@ export default function GroupData( {session, groupId, recs} ) {
       
             const uuid = uuidv4();
             console.log(user.id)
+            let profileGenres = null;
+            if (groupId != null) {
+                let { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('group_id', groupId)
+
+                if (error) throw error;
+
+                if (data) {
+
+                profileGenres = data[0].genre_list;
+
+                }
+            }
             
             const newGroup = {
                 group_id: uuid,
                 inserted_at: new Date().toISOString(),
                 admin_id: user.id,
-                members: [user.id]
+                members: [user.id],
+                group_genre: profileGenres
             }
 
             let { error } = await supabase.from('groups').upsert(newGroup)
