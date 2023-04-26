@@ -325,15 +325,16 @@ export default function GroupData( {session, groupId, recs} ) {
               group_id: uuid,
               is_group_admin: true
             }
-
+            console.log("PASSED THE FIRST UPDATE")
             let { newError } = await supabase.from('profiles').upsert(userUpdate)
             if (newError) throw newError
 
-            if (groupId != null) {
+            if (uuid != null) {
+                console.log("IN THE IF")
                 let { data, error } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('group_id', groupId)
+                    .eq('group_id', uuid)
 
                 if (error) throw error;
 
@@ -346,7 +347,7 @@ export default function GroupData( {session, groupId, recs} ) {
                         .update({
                             group_genre: profileGenres
                         })
-                        .eq('group_id', groupId);
+                        .eq('group_id', uuid);
             
                     if (updateError) throw updateError;
                 }
