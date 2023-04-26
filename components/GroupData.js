@@ -195,7 +195,7 @@ export default function GroupData( {session, groupId, recs} ) {
                 is_group_admin: false,
                 updated_by: data.admin_id
             }
-            alert("top")
+
             let { error } = await supabase.from('profiles').upsert(userUpdate)
             if (error) throw error
 
@@ -248,26 +248,31 @@ export default function GroupData( {session, groupId, recs} ) {
                     updated_at: new Date().toISOString(),
                     members: groups
                 }
-
-                if (groupId != null && userId != null) {
+                alert("outside this bicth")
+                if (groupId != null) {
                     let { data, error } = await supabase
                         .from('profiles')
                         .select('*')
-                        .eq('id', userId)
+                        .eq('group_id', groupId)
                 
                     if (error) throw error;
+
+                    alert("in the middle in this bicth")
                 
                     if (data) {
                         let profileGenres = data[0].genre_list;
+                        alert("otherside of this bitch")
 
-                        let { data, error: groupError } = await supabase
+                        let { data: groupList, error: groupError } = await supabase
                             .from('groups')
                             .select('*')
                             .eq('group_id', groupId)
                 
                         if (groupError) throw groupError;
 
-                        let updated_genre_list = data[0].group_genre.concat(profileGenres);
+                        let updated_genre_list = groupList[0].group_genre.concat(profileGenres);
+                        console.log(updated_genre_list);
+                        alert("its in bicth")
                 
                         let { error: updateError } = await supabase
                             .from('groups')
@@ -346,7 +351,6 @@ export default function GroupData( {session, groupId, recs} ) {
             let { newError } = await supabase.from('profiles').upsert(userUpdate)
             if (newError) throw newError
 
-            alert('Profile updated!')
       
           // Set the state to the new invite link and redirect the user
             setInviteLink(uuid);
