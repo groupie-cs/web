@@ -21,6 +21,7 @@ export default function Cycler({ session }) {
     const spotify = new Spotify()
     const ticketmaster = new Ticketmaster()
     const [activeComponent, setActiveComponent] = useState('artistData')
+    const [genres, setGenres] = useState(null)
 
 
     useEffect(() => {
@@ -68,7 +69,7 @@ export default function Cycler({ session }) {
                 }
             }
             console.log(topGenres)
-            
+            setGenres(topGenres);
             const recs = await ticketmaster.getConcerts("Chicago", topGenres)
             setRecData(recs)
 
@@ -161,7 +162,7 @@ export default function Cycler({ session }) {
             </div>
 
             {activeComponent === 'artistData' && <ArtistData artistData={artistData} session={session}/>}
-            {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} recs={recData} />}
+            {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} genres={genres}/>}
 
             {activeComponent != 'concertData' && <div>
                 <button onClick={handleNextClick} className={styles.detailButton}>Create Group</button>
