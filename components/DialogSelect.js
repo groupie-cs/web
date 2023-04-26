@@ -15,11 +15,14 @@ import { DatePicker } from "@mui/x-date-pickers";
 import Geocode from "react-geocode";
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { Inter } from '@next/font/google'
+import { Inter } from "next/font/google"
 import '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useState, useRef } from "react";
+
+
+
 
 const filterIcon = <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path fillRule="evenodd" clipRule="evenodd" d="M20 5C20 4.44772 19.5523 4 19 4H5C4.44772 4 4 4.44772 4 5V6.58579C4 6.851 4.10536 7.10536 4.29289 7.29289L8.7071 11.7071C8.89464 11.8946 8.99999 12.149 8.99999 12.4142V19.3063C8.99999 19.6476 9.33434 19.8886 9.65811 19.7806L14.6581 18.114C14.8623 18.0459 15 17.8548 15 17.6396V12.4142C15 12.149 15.1054 11.8946 15.2929 11.7071L19.7071 7.29289C19.8946 7.10536 20 6.851 20 6.58579V5Z" fill="#2A4157" fillOpacity="0.24" />
@@ -63,26 +66,59 @@ const theme = createTheme({
         }
       }
     },
-    MuiInputLabel: {
+    MuiFormLabel: {
       styleOverrides: {
         root: {
-          color
+         
         }
       }
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+
+          color,
+        
+          
+        }
+       
+      }
+    },
+  
     MuiInputBase: {
       styleOverrides: {
         root: {
-          color
+          color,
         }
       }
     }
   }
 });
 
+const CustomInputLabel = styled(InputLabel)({
+  padding: '18px',
+  // copy all original styles from MuiInputLabel
+  color: (props) => props.theme.palette.text.primary,
+  fontSize: (props) => props.theme.typography.pxToRem(16),
+  fontWeight: (props) => props.theme.typography.fontWeightBold,
+  lineHeight: 1,
+  '&.Mui-focused': {
+    color: (props) => props.theme.palette.text.primary,
+  },
+  '&.Mui-disabled': {
+    color: (props) => props.theme.palette.text.disabled,
+  },
+});
+
 const LocationInput = styled(InputBase)(({ theme }) => ({
   'label + &': {
     marginTop: theme.spacing(3),
+  },
+  '& -MuiInputLabel-root': {
+    left: '20px',
+    top: '30px',
+    position:'relative',
+    
   },
   '& .MuiInputBase-input': {
     color: 'white',
@@ -186,18 +222,30 @@ const MaxPriceInput = styled(InputBase)(({ theme }) => ({
 }));
 
 
-export default function DialogSelect({session, groupId}) {
+export default function DialogSelect({session, groupId, onSubmit}) {
   const [open, setOpen] = React.useState(false);
   const [age, setAge] = React.useState('');
-  const [firstDate, setFirstDate] = React.useState([null, null]);
-  const [secondDate, setSecondDate] = React.useState([null, null]);
-  const [minPrice, setMinPrice] = React.useState([null, null]);
-  const [maxPrice, setMaxPrice] = React.useState([null, null]);
   const [lat, setLat] = React.useState(null);
   const [lng, setLng] = React.useState(null);
   const [status, setStatus] = React.useState(null);
   const [city, setCity] = React.useState("Loading Location");
-  const [displayState, setDisplayState] = useState(null);
+  const [firstDate, setFirstDate] =  React.useState(null);
+  const [secondDate, setSecondDate] = React.useState(null);
+  const [state, setState] = useState({
+    firstDate: null,
+    secondDate: null
+  });
+
+  const [filterSettings, setFilterSettings] = React.useState({
+    location: '',
+    minPrice: '',
+    maxPrice: '',
+    firstDate: '',
+    secondDate: '',
+  });
+
+  
+
   const supabase = useSupabaseClient()
 
   const inputRef = useRef(null);
@@ -206,9 +254,44 @@ export default function DialogSelect({session, groupId}) {
     getLocation();
   }, []);
 
+  
+
+  
+
   const handleClickOpen = () => {
+    
     setOpen(true);
+    checkFilters();
+    console.log("Checked Filters");
+    console.log("FINISHED CHECK " + filterSettings[0]);
   };
+
+  const user = useUser();
+
+  async function checkFilters() {
+
+    const { data: users, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+
+    if(error) console.log(error)
+   
+    filterSettings[0] = city;
+
+    console.log("THIS IS LOCATION" + filterSettings[0]);
+
+    if (users[0].filters != null) {
+      console.log("FILTERS NOT NULL");
+      console.log(users[0].filters);
+      setFilterSettings(users[0].filters);
+
+    } 
+   
+
+    console.log(filterSettings[0]);
+  
+  }
 
   const handleClose = (event, reason) => {
     console.log("CLOSED")
@@ -217,22 +300,46 @@ export default function DialogSelect({session, groupId}) {
     // }
   };
 
-  //TODO*********************************************************************************
-  //TODO HERE
-  //ADD FORMSTATE TO TRACK UPDATES TO FILTER AS SEEN IN FILTER.JS
-  //THEN USE FORMSTATES TO UPDATE THE SUPABASE WITH NEW USER FILTERS
+// TODO COMPLETE ***********************
+// HAVE FILTER MAKE CALLBACK INTO CONCERT DATA AND THEN INTO CYCLER. THIS CALLBACK SHOULD PASS THROUGH THE FILTER DATA ALL THE WAY INTO 
+// GET PROFILES IN CYCLER AND THEN IN THE GETPROFILE(), have the function RECALL THE TICKETMASTER API WITH UPDATED FILTERS
+// OR, PASS THORUGH GENRES INTO CONCERTDATA, AND THEN REMAKE THE TICKETMASTERAPI FUNCTION THERE IN ORDER TO JUST HAVE IT REFRESH ONLY ITSELF, MAY BE EASIER
   
-  async function updateFilters(filterArray) {
+
+// TODO, CHECK ON UPDATING AND CHECKING THE FILTERS PROPERLY IN SUPABASE, TRY TO PREPOPULATE THE DATES
+  async function updateFilters() {
+    console.log("FILTER SETTINGS HERE");
+    console.log(filterSettings);
+    console.log("GROUP ID HERE " + groupId);
+    //console.log(firstDate);
+    var fixFirstDate = firstDate.format('YYYY-MM-DDTHH:mm:ssZ');
+    var fixSecondDate = secondDate.format('YYYY-MM-DDTHH:mm:ssZ');
+    console.log(fixFirstDate)
+    const filters = [filterSettings[0], filterSettings[1], filterSettings[2], fixFirstDate, fixSecondDate];
+    const { error: error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          filters: filters
+        });
+
+      if (error) throw error
+
+      
+
+
     if (groupId != null) {
 
       const { error: updateError } = await supabase
         .from('groups')
-        .update({filters: filterArray})
-        .eq('group_id', groupId);
+        .upsert({
+          'group_id': groupId,
+          filters: filters});
 
       if (updateError) throw updateError
-
-      alert("FILTERS UPDATED")
+        
+      console.log("FILTERS UPDATED")
+      onSubmit(filters);
     
     }
   }
@@ -268,8 +375,8 @@ export default function DialogSelect({session, groupId}) {
                 }
               }
             }
-            console.log(city, state, country);
-            console.log(address);
+           // console.log(city, state, country);
+            //console.log(address);
             setCity(city);
           },
           (error) => {
@@ -282,45 +389,36 @@ export default function DialogSelect({session, groupId}) {
     }
   }
 
+  // const handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   setFormState(prevState => ({
+  //     ...prevState,
+  //     [name]: value
+  //   }));
+  // }
 
-
-
-
-  const handleFirstDateChange = (newValue) => {
-    setFirstDate(newValue);
-  };
-
-  const handleSecondDateChange = (newValue) => {
-    setSecondDate(newValue);
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormState(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  }
-
-  const [formState, setFormState] = useState({
-    location: '',
-    minPrice: '',
-    maxPrice: '',
-  });
+  // const [formState, setFormState] = useState({
+  //   location: '',
+  //   minPrice: '',
+  //   maxPrice: '',
+  // });
 
   
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("SUBMITTED FILTER")
-    //setDisplayState(formState);
-    const filterUser = [formState.location, formState.minPrice, formState.maxPrice, firstDate, secondDate];
-    console.log(filterUser)
-    updateFilters(filterUser);
+    console.log("SUBMITTED FILTER");
+    updateFilters();
     setOpen(false);
   }
 
+  if (filterSettings == null) {
+    console.log("NULL!")
+  }
+
   return (
+    
     <div>
+      
       <ThemeProvider theme={theme}>
         <Button onClick={handleClickOpen}>
           {filterIcon}
@@ -340,36 +438,47 @@ export default function DialogSelect({session, groupId}) {
           <DialogContent>
             <div ref={inputRef}>
               <Box component="form" sx={{ display: 'grid' }}>
-                <FormControl sx={{ m: 1 }} variant="standard" defaultValue="Test">
-                  <InputLabel htmlFor="location">Location</InputLabel>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <CustomInputLabel htmlFor="location">Location</CustomInputLabel>
                   <LocationInput
                   type="text"
-                  inputProps={{ step: 'any' }}
                   id="location"
                   name="location"
-                  value={formState.location}
-                  onChange={handleChange}
-                  placeholder='Chicago'
+                  value={filterSettings[0] || ''}
+                  onChange={(event) =>
+                    setFilterSettings({
+                      ...filterSettings,
+                      [0]: event.target.value,
+                    })}
+                  
                   />
                 </FormControl>
                 <FormControl sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="minPrice">Minimum Price</InputLabel>
+                  <CustomInputLabel htmlFor="minPrice">Minimum Price</CustomInputLabel>
                   <MinPriceInput
                   type="text"
                   id="minPrice"
                   name="minPrice"
-                  value={formState.minPrice}
-                  onChange={handleChange}
+                  value={filterSettings[1] || ''}
+                  onChange={(event) =>
+                    setFilterSettings({
+                      ...filterSettings,
+                      [1]: event.target.value,
+                    })}
                   />
                 </FormControl>
                 <FormControl sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="maxPrice">Maximum Price</InputLabel>
+                  <CustomInputLabel htmlFor="maxPrice">Maximum Price</CustomInputLabel>
                   <MaxPriceInput
                   type="text"
                   id="maxPrice"
                   name="maxPrice"
-                  value={formState.maxPrice}
-                  onChange={handleChange}
+                  value={filterSettings[2] || ''}
+                  onChange={(event) =>
+                    setFilterSettings({
+                      ...filterSettings,
+                      [2]: event.target.value,
+                    })}
                 
                   />
                 </FormControl>
@@ -377,9 +486,9 @@ export default function DialogSelect({session, groupId}) {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       id="beginning"
-                      label="Start Search Date"
+                      label={"Start Search Date"}
                       value={firstDate}
-                      onChange={handleFirstDateChange}
+                      onChange={(newValue) => setFirstDate(newValue)}
                       borderColor="white"
                       renderInput={(startProps) => (
                         <>
@@ -397,7 +506,7 @@ export default function DialogSelect({session, groupId}) {
                       id="end"
                       label="End Search Date"
                       value={secondDate}
-                      onChange={handleSecondDateChange}
+                      onChange={(newValue) => setSecondDate(newValue)}
                       renderInput={(startProps) => (
                         <>
                           <input
@@ -419,6 +528,7 @@ export default function DialogSelect({session, groupId}) {
           </DialogActions>
         </Dialog>
       </ThemeProvider>
+        
     </div>
   );
 }

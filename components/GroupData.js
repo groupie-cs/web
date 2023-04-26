@@ -11,28 +11,36 @@ export default function GroupData( {session, groupId, recs} ) {
 
     const [group_id, setGroupId] = useState(null)
     const [groupData, setGroupData] = useState(null)
+    const [hasGroupId, setHasGroupId] = useState(null)
     const [groupDataIsHere, setGroupDataIsHere] = useState(null)
-
+    const [groupValues, setGroupValues] = useState(null)
     const [inviteLink, setInviteLink] = useState('')
     const [isAdmin, setIsAdmin] = useState(null)
 
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
         setGroupId(groupId)
-        console.log("GroupID " + groupId)
-        console.log("Session " + session)
-        console.log(groupId)
-        if (inviteId) {
+        if (groupId != null) {
+            setHasGroupId(true)
+            console.log("HAS GROUP")
+            console.log("GroupID " + groupId)
+
+        }
+        
+        
+
+
+
+      
+     
+        if (inviteId && !groupValues) {
             console.log("Adding to Group")
             setIsAdmin(false)
             addToGroup(inviteId)
+            setGroupValues(true)
+        } else if (groupValues) {
         } else {
-            
-            console.log("You are a group owner")
-            console.log(group_id)
-            setIsAdmin(true)
-
-             async function getGroup(groupId) {
+            async function getGroup(groupId) {
                 try {
                     setLoading(true)
                     if (groupId) {
@@ -57,7 +65,15 @@ export default function GroupData( {session, groupId, recs} ) {
                 } 
             
             }
-            getGroup(group_id)
+            if (groupId == null) {
+                console.log("You are a group owner")
+                setIsAdmin(true)
+            }
+
+             //if (!hasGroupId) {
+                getGroup(group_id)
+             //}
+            
         }
     }, [group_id, session])
 
@@ -108,7 +124,12 @@ export default function GroupData( {session, groupId, recs} ) {
 
                 if (newError) throw newError
 
+                console.log(groupData.members)
+
                 const newMembersArray = groupData.members.filter((uuid) => uuid !== userId);
+
+                console.log("NEW ARRAY")
+                console.log(newMembersArray)
 
                 const { error: updateError } = await supabase
                     .from('groups')
@@ -117,6 +138,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
                 if (updateError) throw updateError
                 
+                console.log(userId)
                 const { data, error } = await supabase
                     .from('profiles')
                     .update(userUpdate)
@@ -162,25 +184,73 @@ export default function GroupData( {session, groupId, recs} ) {
             let { error } = await supabase.from('profiles').upsert(userUpdate)
             if (error) throw error
 
-            setGroupId(inviteId)
+            setGroupId(userUpdate.group_id)
+            setHasGroupId(true)
 
-            const { newError } = await supabase
-            .from('groups')
-            .update({ members: supabase.sql`array_append(members, ${user.id})` })
-            .eq('group_id', inviteId);
+            console.log("THIS IS THIS INVITE CODE" + userUpdate.group_id)
 
-            if (newError) throw newError
+            const { data: users } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('group_id', userUpdate.group_id)
 
-            let { newData, addError} = await supabase
+                        if(error) console.log(error)
+                        else {
+                            setGroupData(users)
+                            setGroupDataIsHere(true)
+                            console.log(groupDataIsHere)
+                        }
+
+
+
+            let { data: newGroupData, newGroupError } = await supabase
                 .from('groups')
-                .select(`concert_recs`)
-                .eq('group_id', group_id)
-                .single()
+                .select('members')
+                .eq('group_id', inviteId)
+                .single();
 
-                if (addError) throw addError;
+                if (newGroupError) throw newGroupError
+            
+                console.log("GOT THE GROUP MEMBERS")
+                console.log(newGroupData.members);
+                let groups = newGroupData.members;
+                
+                groups = groups.push(userUpdate.id)
+                console.log(groups)
+                
+            // let { newData, addError} = await supabase
+            //     .from('groups')
+            //     .select(`concert_recs`)
+            //     .eq('group_id', inviteId)
+            //     .single()
 
-                let arr = newData.concert_recs;
-                arr = arr.push(recs);
+            //     if (addError) throw addError;
+
+            
+                
+
+                const newGroup = {
+                    group_id: userUpdate.group_id,
+                    updated_at: new Date().toISOString(),
+                    members: groups
+                }
+
+                // const { error: groupUpdate } = await supabase
+                //     .from('groups')
+                //     .upsert(newGroup)
+                    
+                // if (groupUpdate) throw groupUpdate
+
+                // let arr = newData.concert_recs;
+                // arr = arr.push(recs);
+
+                // const { error: updateError } = await supabase
+                //     .from('groups')
+                //     .upsert({concert_recs: arr})
+                //     .eq('group_id', group_id);
+                    
+                // if (updateError) throw updateError
+
 
 
                 //Remove Duplicates
@@ -194,15 +264,8 @@ export default function GroupData( {session, groupId, recs} ) {
                 //     }
                 // }
 
-                const { error: updateError } = await supabase
-                    .from('groups')
-                    .upsert({concert_recs: arr})
-                    .eq('group_id', group_id);
-                    
-                if (updateError) throw updateError
 
-
-            alert('Profile updated!')
+          //  alert('Profile updated!')
         } catch (error) {
             alert('Error updating the data!')
             console.log(error)
@@ -256,24 +319,27 @@ export default function GroupData( {session, groupId, recs} ) {
 
         
         <div className={styles.group}>
-             <div>
-                {!isAdmin ? (
+             <h2>Group Members</h2>
+        
+                {isAdmin ? (
+                    <div className={styles.groupcard}>
                     <button
                         className={styles.button}
+                        role="button"
                         onClick={() => generateInviteLink()}
                         disabled={loading}
                     >
                         {loading ? 'Loading ...' : 'Generate Invite Link'}
                     </button>
+                     </div>
                 ) : null}
                 {inviteLink && (
                     <p>
                         Share this link with your friends: <a href={`http://localhost:3000/`}>{`http://localhost:3000/?inviteId=${inviteLink}`}</a>
+                        Share this link with your friends: <a href={`https://web-seven-pi.vercel.app/`}>{`https://web-seven-pi.vercel.app/?inviteId=${inviteLink}`}</a>
                     </p>
                 )}
-            </div>
-
-            <h2>Group Members</h2>
+        
            
           
 
@@ -286,7 +352,12 @@ export default function GroupData( {session, groupId, recs} ) {
                        <div className={styles.groupcard}>
                             <img className={styles.groupimg} src={member.avatar_url} alt={`${member.username}'s avatar`} />
                             <h3 className={styles.cardtext}>{member.username}</h3>
-                            <button onClick={() => removeUser(member.id)}>Remove</button>
+                            {isAdmin ? (
+                                <button  
+                                className={styles.button}
+                                role="button" 
+                                onClick={() => removeUser(member.id)}>Remove</button>
+                            ) : null}
                        </div>
                     </div>
                     
