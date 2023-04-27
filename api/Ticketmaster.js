@@ -6,6 +6,8 @@ export class Ticketmaster {
 
     async getConcerts(city, topGenres, startDate = "", endDate = "") {
 
+        console.log("CALLING TICKETMASTER")
+
         const apikey = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY
         const classificationName = "[rock]"
         const keyword = ""
@@ -17,20 +19,22 @@ export class Ticketmaster {
         const totalResponces = 25
 
         let topFive = []
+        let genreTracker = []
 
         for (let i = 0; i < 5; i++) {
             let biggest = 0
             let biggestGenre = ""
             let biggestNumber = 0
             for (var genre in topGenres) {
-                if (topGenres[genre] > biggest) {
+                if ((topGenres[genre] > biggest) && (!genreTracker.includes(genre))) {
                     biggest = topGenres[genre]
                     biggestGenre = genre
                     biggestNumber = topGenres[genre]
-                    topGenres[genre] = -1
                 }
+                
             }
             topFive[i] = [biggestGenre, biggestNumber]
+            genreTracker[i] = biggestGenre
         }
 
         let totalStff = 0
@@ -69,12 +73,6 @@ export class Ticketmaster {
                 })
             ).json()
 
-            console.log("PRINTING TEMP")
-            console.log(topFive[i])
-            console.log("SIZE")
-            console.log(sizeValue)
-            console.log(i)
-            console.log(tempRec)
 
             if (recs == "") {
                 recs = tempRec
@@ -82,8 +80,6 @@ export class Ticketmaster {
                 let newSize = tempRec.page.size 
 
                 let events = tempRec._embedded.events
-                console.log("events")
-                console.log(events)
 
                 for (let i = recs.page.size; i < recs.page.size + newSize; i++) {
                     recs._embedded.events[i] = tempRec._embedded.events[i-recs.page.size]
@@ -94,9 +90,6 @@ export class Ticketmaster {
                 
             }
         }
-        // recs.page.size = recs._embedded.events.length
-        console.log("DONE")
-        console.log(recs)
 
 
 
