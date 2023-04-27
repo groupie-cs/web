@@ -142,7 +142,6 @@ export default function GroupData( {session, groupId, recs} ) {
             }
             
 
-            alert("User Removed!")
       
           } catch (error) {
             alert('Error updating the data!')
@@ -154,10 +153,8 @@ export default function GroupData( {session, groupId, recs} ) {
 
 
     async function addToGroup(inviteId) {
-        alert("in add to grouo")
         try {
             setLoading(true)
-            alert("in try")
             const { data, firstError } = await supabase
                 .from('groups')
                 .select('admin_id')
@@ -358,7 +355,6 @@ export default function GroupData( {session, groupId, recs} ) {
             setInviteLink(uuid);
       
           } catch (error) {
-            alert('Error updating the data!')
             console.log(error)
           } finally {
             setLoading(false)
