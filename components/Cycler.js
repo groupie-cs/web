@@ -70,7 +70,10 @@ export default function Cycler({ session }) {
             }
             console.log(topGenres)
             setGenres(topGenres);
-            const recs = await ticketmaster.getConcerts("Chicago", topGenres)
+
+            
+
+            const recs = await ticketmaster.getConcerts("Chicago", countGenres(topGenres))
             setRecData(recs)
 
             console.log(recs)

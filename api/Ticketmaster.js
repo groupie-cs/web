@@ -94,7 +94,7 @@ export class Ticketmaster {
                 
             }
         }
-        recs.page.size = recs._embedded.events.length
+        // recs.page.size = recs._embedded.events.length
         console.log("DONE")
         console.log(recs)
 
