@@ -68,28 +68,17 @@ export default function Cycler({ session }) {
                     topGenres.splice(i, 1)
                 }
             }
-            console.log(topGenres)
-            setGenres(topGenres);
+            setGenres(countGenres(topGenres));
 
             
 
-            const recs = await ticketmaster.getConcerts("Chicago", countGenres(topGenres))
-            setRecData(recs)
+            // const recs = await ticketmaster.getConcerts("Chicago", genres)
+            // setRecData(recs)
 
-            console.log(recs)
+            // console.log(recs)
 
-            // remove any recs from recs if there are two with the same name
-            for (let i = 0; i < recs._embedded.events.length; i++) {
-                console.log("in the looper")
-                for (let j = i + 1; j < recs._embedded.events.length; j++) {
-                    if (recs._embedded.events[i].name == recs._embedded.events[j].name) {
-                        console.log("in the if")
-                        recs._embedded.events.splice(j, 1)
-                    }
-                }
-            }
 
-            console.log(recs)
+            // console.log(recs)
 
            if (user.id != null && topGenres != null) {
             let { error } = await supabase

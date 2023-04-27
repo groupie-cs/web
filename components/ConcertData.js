@@ -75,13 +75,14 @@ export default function ConcertData({ recData, session, groupId, genres}) {
 
     useEffect(() => {
         if (inputRecs == null && firstSet == false) {
-            setInputRecs(recData)
+            doTicketmaster()
             setFirstSet(true)
         }
         if (filters != null) {
             doTicketmaster()
             setFilters(null);
         }
+        
     });
 
     async function updateRecData() {
@@ -110,14 +111,27 @@ export default function ConcertData({ recData, session, groupId, genres}) {
     }
 
     async function doTicketmaster() {
-        console.log("FILTERS HERE" + filters.length)
-        console.log(filters[0]);
-        console.log(filters[3])
-        console.log(filters[4])
-        //const recs = await ticketmaster.getConcerts(filters[0], genres);
-        const recs = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
-        setInputRecs(recs);
-        console.log("DONE")
+
+        if (filters == null) {
+          const recsDefault = await ticketmaster.getConcerts("Chicago", genres);
+
+          // remove any recs from recs if there are two with the same name
+          if (recsDefault._embedded != null) {
+            for (let i = 0; i < recsDefault._embedded.events.length; i++) {
+              for (let j = i + 1; j < recsDefault._embedded.events.length; j++) {
+                  if (recsDefault._embedded.events[i].name == recsDefault._embedded.events[j].name) {
+                      recsDefault._embedded.events.splice(j, 1)
+                  }
+              }
+            }
+            setInputRecs(recsDefault);
+        }
+
+        } else {
+          const recs = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
+          setInputRecs(recs);
+          console.log("DONE")
+        }
     }
 
     const handleFilterSubmit = (newFilters) => {
