@@ -240,14 +240,15 @@ export default function GroupData( {session, groupId, recs} ) {
                     members: groups
                 }
                 console.log("outside this bicth")
-                if (groupId != null) {
+                console.log("THIS IS GROUP ID IN ADD TO GROUP " + inviteId)
+                if (inviteId != null) {
                     console.log("right here bitch")
                     let { data, error } = await supabase
                         .from('profiles')
                         .select('*')
-                        .eq('group_id', groupId)
+                        .eq('group_id', inviteId)
                 
-                    if (error) throw error;
+                    if (error) console.log("BAD ERROR " + error);
 
                     console.log("in the middle in this bicth")
                 
@@ -258,9 +259,9 @@ export default function GroupData( {session, groupId, recs} ) {
                         let { data: groupList, error: groupError } = await supabase
                             .from('groups')
                             .select('*')
-                            .eq('group_id', groupId)
+                            .eq('group_id', inviteId)
 
-                        if (groupError) console.log("THIS IS THE ERRORED GROUP ID " + groupId);
+                        if (groupError) console.log("THIS IS THE ERRORED GROUP ID " + inviteId);
 
                         let updated_genre_list = groupList[0].group_genre.concat(profileGenres);
                         console.log(updated_genre_list);
@@ -271,7 +272,7 @@ export default function GroupData( {session, groupId, recs} ) {
                             .update({
                                 group_genre: updated_genre_list
                             })
-                            .eq('group_id', groupId);
+                            .eq('group_id', inviteId);
                 
                         if (updateError) throw updateError;
                     }
