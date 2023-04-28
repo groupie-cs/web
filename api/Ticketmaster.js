@@ -6,6 +6,10 @@ export class Ticketmaster {
 
     async getConcerts(city, topGenres, startDate = "", endDate = "") {
 
+        // for (let i = 0; i < 1000000000; i++) {
+        //     i += 0
+        // }
+
         console.log("CALLING TICKETMASTER")
 
         const apikey = process.env.NEXT_PUBLIC_TICKETMASTER_API_KEY
@@ -44,17 +48,23 @@ export class Ticketmaster {
             }
         }
 
+        console.log("GENRES")
+        console.log(topFive)
+
     
         let recs = ""
 
         for (let i = 0; i < 5; i++) {
             let tempRec = ""
             if (topFive[i][0] == "") {
+                console.log("Nothing Here....")
                 continue;
             }
 
             let sizeValue = (Math.round((topFive[i][1] * totalResponces) / totalStff)) + ""
-            
+            console.log("SIZE VALUE + Genre")
+            console.log(sizeValue)
+            console.log(topFive[i][0])
 
             const url = "https://app.ticketmaster.com/discovery/v2/events.json?" +
             "size=" + sizeValue +
@@ -77,9 +87,12 @@ export class Ticketmaster {
             if (recs == "") {
                 recs = tempRec
             } else {
-                let newSize = tempRec.page.size 
+                if (tempRec._embedded == null) {
+                    console.log("Null embded....")
+                    continue;
+                }
 
-                let events = tempRec._embedded.events
+                let newSize = tempRec.page.size 
 
                 for (let i = recs.page.size; i < recs.page.size + newSize; i++) {
                     recs._embedded.events[i] = tempRec._embedded.events[i-recs.page.size]
@@ -91,8 +104,8 @@ export class Ticketmaster {
             }
         }
 
-
-
+        console.log("RECS HERE")
+        console.log(recs)
         return recs
     }
 

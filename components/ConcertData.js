@@ -157,20 +157,32 @@ export default function ConcertData({ recData, session, groupId, genres}) {
                   }
               }
             }
-            setInputRecs(recsDefault);
           }
+          if (recsDefault != null) {
+            setInputRecs(recsDefault);
+            recData = recsDefault
+          }
+          
+
         } catch (error) {
           console.log(error)
         }
 
+        
+
       } else {
           console.log("WITH FILTERS")
           try {
-            const recs = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
-            setInputRecs(recs);
+            const recsFilter = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
+            
+            if (recsFilter != null) {
+              setInputRecs(recsFilter);
+              recData = recsFilter
+            }
           } catch (error) {
             console.log(error)
           }
+
           
           console.log("DONE")
       }
@@ -270,7 +282,7 @@ export default function ConcertData({ recData, session, groupId, genres}) {
 
             {NewPage == true && <div>
                 <div className={styles.group}>
-                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
+                <GroupData session={session} groupId={groupId}> recs={inputRecs}</GroupData>
             </div>
             </div>}
 
