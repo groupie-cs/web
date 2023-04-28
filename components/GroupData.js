@@ -21,7 +21,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
-        localStorage.clear()
+        //localStorage.clear()
         setGroupId(groupId)
         if (groupId != null) {
             setHasGroupId(true)
