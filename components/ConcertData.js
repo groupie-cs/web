@@ -87,32 +87,9 @@ export default function ConcertData({ recData, session, groupId, genres}) {
         
     });
 
-    async function updateRecData() {
-      try {
-        setLoading(true)
-
-        if (groupId != null) {
-            let { data, error } = await supabase
-                .from('groups')
-                .select('*')
-                .eq('group_id', groupId)
-
-            if (error) throw error;
-
-            let group_genre_list = data[0].group_genre
-
-            let genre_table = countGenres(group_genre_list)
-        }
-
-      } catch (error) {
-          alert('Error Getting Group!')
-        console.log(error)
-      } finally {
-         setLoading(false)
-      }
-    }
 
     async function doTicketmaster() {
+        console.log("DO TICKETMASTER")
       setFirstSet(true)
 
       const { data: users, error } = await supabase
@@ -190,6 +167,7 @@ export default function ConcertData({ recData, session, groupId, genres}) {
 
     const handleFilterSubmit = (newFilters) => {
         setFilters(newFilters);
+        console.log("IN HANDLE FILTER SUBMIUT")
       };
 
     // IN RETURN
