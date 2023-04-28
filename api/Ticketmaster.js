@@ -54,22 +54,15 @@ export class Ticketmaster {
     
         let recs = ""
 
-        for (let i = 0; i < 5; i++) {
+       // for (let i = 0; i < 5; i++) {
             let tempRec = ""
-            if (topFive[i][0] == "") {
-                console.log("Nothing Here....")
-                continue;
-            }
+           
 
-            let sizeValue = (Math.round((topFive[i][1] * totalResponces) / totalStff)) + ""
-            console.log("SIZE VALUE + Genre")
-            console.log(sizeValue)
-            console.log(topFive[i][0])
+            
 
             const url = "https://app.ticketmaster.com/discovery/v2/events.json?" +
-            "size=" + sizeValue +
             "&apikey=" + apikey +
-            "&classificationName=" + topFive[i][0] +
+            "&classificationName=" + topFive +
             "&keyword=" + keyword +
             "&radius=" + radius +
             "&startDateTime=" + modStartDate +
@@ -89,7 +82,7 @@ export class Ticketmaster {
             } else {
                 if (tempRec._embedded == null) {
                     console.log("Null embded....")
-                    continue;
+                   // continue;
                 }
 
                 let newSize = tempRec.page.size 
@@ -102,7 +95,7 @@ export class Ticketmaster {
                 recs.page.size = recs._embedded.events.length
                 
             }
-        }
+        //}
 
         console.log("RECS HERE")
         console.log(recs)

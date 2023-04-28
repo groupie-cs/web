@@ -339,9 +339,11 @@ export default function DialogSelect({session, groupId, onSubmit}) {
       if (updateError) throw updateError
         
       console.log("FILTERS UPDATED")
-      onSubmit(filters);
+      
     
     }
+
+    onSubmit(filters);
   }
 
   const getLocation = () => {
