@@ -21,6 +21,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
+        localStorage.clear()
         setGroupId(groupId)
         if (groupId != null) {
             setHasGroupId(true)
@@ -28,7 +29,6 @@ export default function GroupData( {session, groupId, recs} ) {
             console.log("GroupID " + groupId)
 
         }
-     
         if (inviteId && !groupValues) {
             setIsAdmin(false)
             addToGroup(inviteId)
@@ -51,7 +51,6 @@ export default function GroupData( {session, groupId, recs} ) {
                             setGroupDataIsHere(true)
                             console.log(groupDataIsHere)
                         }
-
                         const { data: userData, error: currentError } = await supabase
                             .from('profiles')
                             .select('*')
@@ -64,35 +63,9 @@ export default function GroupData( {session, groupId, recs} ) {
                             console.log("YOU ARE TEH ADMIN")
                             setIsAdmin(true)
                         }
-
-
-                    }
-
-                    if (groupId != null) {
-                        let { data, error } = await supabase
-                            .from('profiles')
-                            .select('*')
-                            .eq('group_id', groupId)
-
-                        if (error) throw error;
-
-                        if (data) {
-
-                            let profileGenres = data[0].genre_list;
-
-                            let { error: updateError } = await supabase
-                                .from('groups')
-                                .update({
-                                    group_genre: profileGenres
-                                })
-                                .eq('group_id', groupId);
-                    
-                            if (updateError) throw updateError;
-                        }
                     }
 
                 } catch (error) {
-                   
                     console.log(error)
                 } finally {
                     setLoading(false)
@@ -110,7 +83,6 @@ export default function GroupData( {session, groupId, recs} ) {
             
         }
     }, [group_id, session])
-
 
     function handleCopyLink() {
         navigator.clipboard.writeText(inviteLink);
@@ -188,10 +160,9 @@ export default function GroupData( {session, groupId, recs} ) {
             }
             
 
-           // alert("User Removed!")
       
           } catch (error) {
-           // alert('Error updating the data!')
+            alert('Error updating the data!')
             console.log(error)
           } finally {
             setLoading(false)
@@ -200,18 +171,14 @@ export default function GroupData( {session, groupId, recs} ) {
 
 
     async function addToGroup(inviteId) {
-        alert("in add to grouo")
         try {
             setLoading(true)
-            alert("in try")
             const { data, firstError } = await supabase
                 .from('groups')
                 .select('admin_id')
                 .eq('group_id', inviteId)
                 .single();
             if (firstError) throw firstError
-
-        
 
             const userUpdate = {
                 id: user.id,
@@ -273,38 +240,40 @@ export default function GroupData( {session, groupId, recs} ) {
                     updated_at: new Date().toISOString(),
                     members: groups
                 }
-                alert("outside this bicth")
-                if (groupId != null) {
+                console.log("outside this bicth")
+                console.log("THIS IS GROUP ID IN ADD TO GROUP " + inviteId)
+                if (inviteId != null) {
+                    console.log("right here bitch")
                     let { data, error } = await supabase
                         .from('profiles')
                         .select('*')
-                        .eq('group_id', groupId)
+                        .eq('group_id', inviteId)
                 
-                    if (error) throw error;
+                    if (error) console.log("BAD ERROR " + error);
 
-                    alert("in the middle in this bicth")
+                    console.log("in the middle in this bicth")
                 
                     if (data) {
                         let profileGenres = data[0].genre_list;
-                        alert("otherside of this bitch")
+                        console.log("otherside of this bitch")
 
                         let { data: groupList, error: groupError } = await supabase
                             .from('groups')
                             .select('*')
-                            .eq('group_id', groupId)
-                
-                        if (groupError) throw groupError;
+                            .eq('group_id', inviteId)
+
+                        if (groupError) console.log("THIS IS THE ERRORED GROUP ID " + inviteId);
 
                         let updated_genre_list = groupList[0].group_genre.concat(profileGenres);
                         console.log(updated_genre_list);
-                        alert("its in bicth")
+                        console.log("its in bicth")
                 
                         let { error: updateError } = await supabase
                             .from('groups')
                             .update({
                                 group_genre: updated_genre_list
                             })
-                            .eq('group_id', groupId);
+                            .eq('group_id', inviteId);
                 
                         if (updateError) throw updateError;
                     }
@@ -342,7 +311,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
           //  alert('Profile updated!')
         } catch (error) {
-            //alert('Error updating the data!')
+            alert('Error updating the data!')
             console.log(error)
         } finally {
             setLoading(false)
@@ -355,6 +324,7 @@ export default function GroupData( {session, groupId, recs} ) {
       
             const uuid = uuidv4();
             console.log(user.id)
+
             
             const newGroup = {
                 group_id: uuid,
@@ -363,7 +333,6 @@ export default function GroupData( {session, groupId, recs} ) {
                 members: [user.id]
             }
 
-            setShowButton(false);
 
             let { error } = await supabase.from('groups').upsert(newGroup)
             if (error) throw error
@@ -374,17 +343,43 @@ export default function GroupData( {session, groupId, recs} ) {
               group_id: uuid,
               is_group_admin: true
             }
-
+            console.log("PASSED THE FIRST UPDATE")
             let { newError } = await supabase.from('profiles').upsert(userUpdate)
+            
             if (newError) throw newError
 
-            //alert('Profile updated!')
+            setShowButton(false);
+
+            if (uuid != null) {
+                console.log("IN THE IF")
+                let { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('group_id', uuid)
+
+                if (error) throw error;
+
+                if (data) {
+
+                    let profileGenres = data[0].genre_list;
+
+                    let { error: updateError } = await supabase
+                        .from('groups')
+                        .update({
+                            group_genre: profileGenres
+                        })
+                        .eq('group_id', uuid);
+            
+                    if (updateError) throw updateError;
+                }
+            }
+
       
           // Set the state to the new invite link and redirect the user
-            setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
+          //setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
+          setInviteLink(`https://web-seven-pi.vercel.app/?inviteId=${uuid}`);
       
           } catch (error) {
-            alert('Error updating the data!')
             console.log(error)
           } finally {
             setLoading(false)
@@ -398,7 +393,7 @@ export default function GroupData( {session, groupId, recs} ) {
         <div className={styles.group}>
              <h2>Group Members</h2>
         
-                {showButton && !groupDataIsHere && isAdmin ? (
+             {showButton && !groupDataIsHere && isAdmin ? (
                     <div className={styles.groupcard}>
                     <button
                         className={styles.button}
@@ -412,15 +407,15 @@ export default function GroupData( {session, groupId, recs} ) {
                 ) : null}
                 {inviteLink && (
                     <div className={styles.groupcard}>
-                        <div>
-                            <button 
-                                className={styles.button}
-                                role="button"
-                                onClick={handleCopyLink}>
-                                {copySuccess ? copySuccess : 'Copy Link for Friends'}
-                            </button>
-                        </div>
+                    <div>
+                        <button 
+                            className={styles.button}
+                            role="button"
+                            onClick={handleCopyLink}>
+                            {copySuccess ? copySuccess : 'Copy Link for Friends'}
+                        </button>
                     </div>
+                </div>
                 )}
         
            

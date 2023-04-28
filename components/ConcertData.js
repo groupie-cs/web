@@ -66,6 +66,7 @@ export default function ConcertData({ recData, session, groupId, genres}) {
     const [CurrRec, setRec] = useState(null)
     const [Artists, setArtists] = useState(null)
     const spotify = new Spotify()
+    const user = useUser()
 
     const [filters, setFilters] = useState(null);
     const [inputRecs, setInputRecs] = useState(null);
@@ -75,13 +76,15 @@ export default function ConcertData({ recData, session, groupId, genres}) {
 
     useEffect(() => {
         if (inputRecs == null && firstSet == false) {
-            setInputRecs(recData)
-            setFirstSet(true)
+          setFirstSet(true)
+          doTicketmaster()
+            
         }
         if (filters != null) {
             doTicketmaster()
             setFilters(null);
         }
+        
     });
 
     async function updateRecData() {
@@ -110,14 +113,79 @@ export default function ConcertData({ recData, session, groupId, genres}) {
     }
 
     async function doTicketmaster() {
-        console.log("FILTERS HERE" + filters.length)
-        console.log(filters[0]);
-        console.log(filters[3])
-        console.log(filters[4])
-        //const recs = await ticketmaster.getConcerts(filters[0], genres);
-        const recs = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
-        setInputRecs(recs);
-        console.log("DONE")
+      setFirstSet(true)
+
+      const { data: users, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+
+      if(error) console.log(error)
+
+      let temp_id = users[0].group_id
+      if (temp_id != null) {
+      
+        const { data: groups, groupError } = await supabase
+          .from('groups')
+          .select('*')
+          .eq('group_id', temp_id)
+
+        if(groupError) console.log(groupError)
+
+        let groupGenre = groups[0].group_genre;
+
+        console.log("LOOK HERE")
+        console.log(groupGenre)
+
+        genres = countGenres(groupGenre)
+        console.log(genres)
+      }
+
+      if (filters == null) {
+        console.log("NO FILTERS")
+        console.log(firstSet)
+
+        try {
+          const recsDefault = await ticketmaster.getConcerts("Chicago", genres);
+
+          // remove any recs from recs if there are two with the same name
+          if (recsDefault._embedded != null) {
+            for (let i = 0; i < recsDefault._embedded.events.length; i++) {
+              for (let j = i + 1; j < recsDefault._embedded.events.length; j++) {
+                  if (recsDefault._embedded.events[i].name == recsDefault._embedded.events[j].name) {
+                      recsDefault._embedded.events.splice(j, 1)
+                  }
+              }
+            }
+          }
+          if (recsDefault != null) {
+            setInputRecs(recsDefault);
+            recData = recsDefault
+          }
+          
+
+        } catch (error) {
+          console.log(error)
+        }
+
+        
+
+      } else {
+          console.log("WITH FILTERS")
+          try {
+            const recsFilter = await ticketmaster.getConcerts(filters[0], genres, filters[3], filters[4]);
+            
+            if (recsFilter != null) {
+              setInputRecs(recsFilter);
+              recData = recsFilter
+            }
+          } catch (error) {
+            console.log(error)
+          }
+
+          
+          console.log("DONE")
+      }
     }
 
     const handleFilterSubmit = (newFilters) => {
@@ -214,7 +282,7 @@ export default function ConcertData({ recData, session, groupId, genres}) {
 
             {NewPage == true && <div>
                 <div className={styles.group}>
-                <GroupData session={session} groupId={groupId}> recs={recData}</GroupData>
+                <GroupData session={session} groupId={groupId}> recs={inputRecs}</GroupData>
             </div>
             </div>}
 

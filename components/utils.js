@@ -8,7 +8,6 @@ const countGenres = (genreList) => {
       "folk",
       "rock",
       "indie",
-      "lo-fi",
       "anime",
       "blues",
       "country",
