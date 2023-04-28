@@ -376,8 +376,8 @@ export default function GroupData( {session, groupId, recs} ) {
 
       
           // Set the state to the new invite link and redirect the user
-          setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
-          //setInviteLink(`https://web-seven-pi.vercel.app/?inviteId=${inviteLink}`);
+          //setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
+          setInviteLink(`https://web-seven-pi.vercel.app/?inviteId=${uuid}`);
       
           } catch (error) {
             console.log(error)
