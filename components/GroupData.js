@@ -21,7 +21,7 @@ export default function GroupData( {session, groupId, recs} ) {
 
     useEffect(() => {
         const inviteId = localStorage.getItem('inviteLink')
-        localStorage.clear()
+        //localStorage.clear()
         setGroupId(groupId)
         if (groupId != null) {
             setHasGroupId(true)
@@ -376,8 +376,8 @@ export default function GroupData( {session, groupId, recs} ) {
 
       
           // Set the state to the new invite link and redirect the user
-          //setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
-          setInviteLink(`https://web-seven-pi.vercel.app/?inviteId=${uuid}`);
+          setInviteLink(`http://localhost:3000/?inviteId=${uuid}`);
+          //setInviteLink(`https://web-seven-pi.vercel.app/?inviteId=${uuid}`);
       
           } catch (error) {
             console.log(error)

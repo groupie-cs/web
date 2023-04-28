@@ -154,7 +154,7 @@ export default function Cycler({ session }) {
             {activeComponent === 'concertData' && <ConcertData recData={recData} session={session} groupId={group_id} genres={genres}/>}
 
             {activeComponent != 'concertData' && <div>
-                <button onClick={handleNextClick} className={styles.createButton}>Create Group</button>
+                <button onClick={handleNextClick} className={styles.createButton}>See Concerts</button>
             </div>}
         </div>
     )
